@@ -2,6 +2,6 @@ lian3204321.github.io
 =====================
 
 it's a start
-*start C
-*just is start c
-*How to use
+* start C
+* ijust is start c
+* How to use
