@@ -278,8 +278,10 @@ tags: [php,symfony,routing]
 
 在模板中获取一个uri
 
-    <a href="{{ url('blog_show', {'slug': 'my-blog-post'}) }}">
-      Read this blog post.
+    <a href="{ { url('blog_show', {'slug': 'my-blog-post'}) } }">
+     
+     Read this blog post.
+    
     </a>
 
 

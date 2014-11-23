@@ -8,11 +8,11 @@ tags: [php,symfony,template]
 
 使用的是twig模板
 
-    * {{ ... }}: "Says something": prints a variable or the result of an expression to the template; 输出
+    * \{\{ ... \}\}: "Says something": prints a variable or the result of an expression to the template; 输出
 
-    * {% ... %}: "Does something": a tag that controls the logic of the template; it is used to execute statements such as for-loops for example. 进行逻辑控制
+    * \{\% ... \%\}: "Does something": a tag that controls the logic of the template; it is used to execute statements such as for-loops for example. 进行逻辑控制
 
-    * {# ... #}: "Comment something": it's the equivalent of the PHP /* comment */ syntax. It's used to add single or multi-line comments. The content of the comments isn't included in the rendered pages. 进行注释
+    * { # ... # }: "Comment something": it's the equivalent of the PHP /* comment */ syntax. It's used to add single or multi-line comments. The content of the comments isn't included in the rendered pages. 进行注释
 
 可以使用过滤器
 
