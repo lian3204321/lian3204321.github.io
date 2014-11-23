@@ -8,5 +8,11 @@ http://lian3204321.github.io/rss.xml
 http://lian3204321.github.io/sitemap.txt
 http://lian3204321.github.io/tags.html
 
+http://lian3204321.github.io/symfony/2014/12/12/symfony-Template
+http://lian3204321.github.io/symfony/2014/12/11/symfony-controller
+http://lian3204321.github.io/symfony/2014/12/11/symfony-Routing
+http://lian3204321.github.io/symfony/2014/12/10/symfony%E5%AE%89%E8%A3%85%E8%AE%B0%E5%BD%95
+http://lian3204321.github.io/c/2014/12/08/c%E7%9A%84%E6%8C%87%E9%92%88
+http://lian3204321.github.io/git/2014/12/07/%E5%85%B3%E4%BA%8Egit%E7%9A%84%E5%91%BD%E4%BB%A4
 http://lian3204321.github.io/c/2014/12/07/hello-world
 http://lian3204321.github.io/anything/2014/12/07/I-Coming

@@ -1,0 +1,637 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Symfony Template</title>
+    
+    <meta name="author" content="">
+
+    <!-- Enable responsive viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap styles -->
+    <link href="/assets/themes/bootstrap-3/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Optional theme -->
+    <link href="/assets/themes/bootstrap-3/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
+    <!-- Sticky Footer -->
+    <link href="/assets/themes/bootstrap-3/bootstrap/css/bs-sticky-footer.css" rel="stylesheet">
+    
+    <!-- Custom styles -->
+    <link href="/assets/themes/bootstrap-3/css/style.css?body=1" rel="stylesheet" type="text/css" media="all">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <!-- Update these with your own images
+      <link rel="shortcut icon" href="images/favicon.ico">
+      <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+      <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+      <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+    -->
+
+    <!-- atom & rss feed -->
+    <link href="" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
+    <link href="" type="application/rss+xml" rel="alternate" title="Sitewide RSS Feed">
+
+  </head>
+
+  <body>
+    <div id="wrap">
+      <nav class="navbar navbar-default" role="navigation">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#jb-navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">anni baby home</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="jb-navbar-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+            
+
+
+  
+    
+      
+      	
+      	<li><a href="/archive.html">Archive</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/categories.html">Categories</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/pages.html">Pages</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/tags.html">Tags</a></li>
+      	
+      
+    
+  
+
+
+
+          </ul>
+          <form class="navbar-form navbar-right" role="search">
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="Search">
+            </div>
+            <button type="submit" class="btn btn-default">Submit</button>
+          </form>
+        </div><!-- /.navbar-collapse -->
+      </nav>
+
+      <div class="container">
+        
+<div class="page-header">
+  <h1>Symfony Template </h1>
+</div>
+
+<div class="row post-full">
+  <div class="col-xs-12">
+    <div class="date">
+      <span>12 December 2014</span>
+    </div>
+    <div class="content">
+      <h1 id="template">Template</h1>
+
+<p>使用的是twig模板</p>
+
+<pre><code>* \{\{ ... \}\}: "Says something": prints a variable or the result of an expression to the template; 输出
+
+* \{\% ... \%\}: "Does something": a tag that controls the logic of the template; it is used to execute statements such as for-loops for example. 进行逻辑控制
+
+* { # ... # }: "Comment something": it's the equivalent of the PHP /* comment */ syntax. It's used to add single or multi-line comments. The content of the comments isn't included in the rendered pages. 进行注释
+</code></pre>
+
+<p>可以使用过滤器</p>
+
+<pre><code>{{ title|upper }}
+</code></pre>
+
+<p>可以使用函数</p>
+
+<pre><code>{% for i in 0..10 %}
+    &lt;div class="{{ cycle(['odd', 'even'], i) }}"&gt;
+        &lt;!-- some HTML here --&gt;
+    &lt;/div&gt;
+{% endfor %}
+</code></pre>
+
+<h2 id="twig">twig模板的缓存</h2>
+
+<p>在dev环境下打开debug模式时twig是不会做模板缓存的</p>
+
+<h2 id="section">模板的继承和布局</h2>
+
+<p>布局一般使用block，因为一个网站的页头页脚不会经常发生变化.
+下例为一个基础的布局</p>
+
+<pre><code>{# app/Resources/views/base.html.twig #}
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8" /&gt;
+&lt;title&gt;{% block title %}Test Application{% endblock %}&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id="sidebar"&gt;
+{% block sidebar %}
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="/"&gt;Home&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/blog"&gt;Blog&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+{% endblock %}
+&lt;/div&gt;
+
+&lt;div id="content"&gt;
+{% block body %}{% endblock %}
+&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<p>可以重写上面的基础模板
+利用extends进行继承</p>
+
+<pre><code>{# app/Resources/views/Blog/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}My cool blog posts{% endblock %}
+
+{% block body %}
+    {% for entry in blog_entries %}
+            &lt;h2&gt;{{ entry.title }}&lt;/h2&gt;
+            &lt;p&gt;{{ entry.body }}&lt;/p&gt;
+    {% endfor %}
+{% endblock %}
+</code></pre>
+
+<p>这样就将base.html.twig中的title block  和 body block 进行了替换</p>
+
+<h3 id="section-1">使用模板继承的注意点</h3>
+
+<pre><code>* If you use {% extends %} in a template, it must be the first tag in that template; 当使用extends继承模板时 一个tag标签必须是extends
+
+* The more {% block %} tags you have in your base templates, the better. Remember, child templates don't have to define all parent blocks, so create as many blocks in your base templates as you want and give each a sensible default. The more blocks your base templates have, the more flexible your layout will be; 一个基础的模板中，定义越多的block则你的基础模板就越灵活
+
+* If you find yourself duplicating content in a number of templates, it probably means you should move that content to a {% block %} in a parent template. In some cases, a better solution may be to move the content to a new template and include it (see Including other Templates);  当你发现一段内容反复的出现在你的子模板中，则意味着你需要将这个内容加入到你的父模板中，或者将这个内容提出来作为一个模板，然后用include标签 来包含这个模板
+
+* If you need to get the content of a block from the parent template, you can use the {{ parent() }} function. This is useful if you want to add to the contents of a parent block instead of completely overriding it: 如果你需要引入父模板中对应的block中的内容时，可以使用parent()方法进行输出,如下例
+
+{% block sidebar %}
+    &lt;h3&gt;Table of Contents&lt;/h3&gt;
+
+        {# ... #}
+
+    {{ parent() }}
+{% endblock %}
+</code></pre>
+
+<h2 id="section-2">模板的命名的位置</h2>
+
+<p>模板一般会存放在2个不同的地方</p>
+
+<pre><code>* app/Resources/views/: The applications views directory can contain application-wide base templates (i.e. your application's layouts and templates of the application bundle) as well as templates that override third party bundle templates 该目录下存放的是项目的基础模板，或者是bundle的基础模板
+
+* path/to/bundle/Resources/views/: Each third party bundle houses its templates in its Resources/views/ directory (and subdirectories). When you plan to share your bundle, you should put the templates in the bundle instead of the app/ directory. 这个目录存放的是项目的子模板。
+</code></pre>
+
+<h3 id="bundle">在bundle中引入一个模板</h3>
+
+<p>对于在bundle中的模板，symfony使用的是 bundle:directory:filename的语法来访问模板</p>
+
+<p>举例说明：AcmeBlogBundle:Blog:index.html.twig</p>
+
+<pre><code>AcmeBlogBundle: (bundle) the template lives inside the AcmeBlogBundle  代表的是acmeBlogBundle,目录位置为src/Acme/BlogBundle/Resource/views目录
+
+Blog: (directory) indicates that the template lives inside the Blog subdirectory of Resources/views;Blog代表的是view目录下的Blog的目录
+
+index.html.twig: (filename) the actual name of the file is index.html.twig. 代表的是文件名
+</code></pre>
+
+<p>下例 AcmeBlogBundle::layout.html.twig</p>
+
+<pre><code>layout.html.twig这个文件直接存在于src/Acme/BlogBundle/Resource/views目录下
+</code></pre>
+
+<h3 id="section-3">模板的后缀</h3>
+
+<p>不同的后缀代表不同的解析引擎,和格式化的方式</p>
+
+<pre><code>Blog/index.html.twig   twig的引擎   html格式化方式
+Blog/index.html.php    php的引擎    html格式化方式
+Blog/index.css.twig    twig引擎     css的格式化方式
+</code></pre>
+
+<h2 id="tags-and-helpers">Tags and Helpers</h2>
+
+<h3 id="including-other-templates">Including other Templates</h3>
+
+<p>通过向包含的模板中传如不同的参数来实现展示内容的不同,如下例</p>
+
+<p>一个包含变量的模板,其中有变量article</p>
+
+<pre><code>{# app/Resources/views/Article/articleDetails.html.twig #}
+&lt;h2&gt;{{ article.title }}&lt;/h2&gt;
+&lt;h3 class="byline"&gt;by {{ article.authorName }}&lt;/h3&gt;
+
+&lt;p&gt;
+    {{ article.body }}
+&lt;/p&gt;
+</code></pre>
+
+<p>一个需要引入article的模板</p>
+
+<pre><code>{# app/Resources/views/Article/list.html.twig #}
+{% extends 'layout.html.twig' %}
+
+{% block body %}
+    &lt;h1&gt;Recent Articles&lt;h1&gt;
+
+        {% for article in articles %}
+                {{ include('Article/articleDetails.html.twig', { 'article': article }) }}
+        {% endfor %}
+
+{% endblock %}
+</code></pre>
+
+<p>通过include一个模板并且传入一个article变量 ，在articleDetail.html.twig模板中是可以使用list.html.twig模板中定义的变量，如果在include()方法中设置with_context 为false时则不能使用外部的模板变量</p>
+
+<h3 id="section-4">嵌入控制器</h3>
+
+<p>当你需要进行数据库操作或者一些复杂的逻辑操作的时候，一个模板就不足以完成任务，你需要在模板里面嵌入一个控制器已完成任务</p>
+
+<p>一个可以嵌入的控制器</p>
+
+<pre><code>// src/AppBundle/Controller/ArticleController.php
+namespace AppBundle\Controller;
+
+// ...
+
+class ArticleController extends Controller
+{
+public function recentArticlesAction($max = 3)
+{
+    // make a database call or other logic
+    // to get the "$max" most recent articles
+    $articles = ...;
+
+    return $this-&gt;render(
+            'Article/recentList.html.twig',
+            array('articles' =&gt; $articles)
+            );
+}
+}
+</code></pre>
+
+<p>render的模板为</p>
+
+<pre><code>{# app/Resources/views/Article/recentList.html.twig #}
+{% for article in articles %}
+    &lt;a href="/article/{{ article.slug }}"&gt;
+            {{ article.title }}
+    &lt;/a&gt;
+{% endfor %}
+</code></pre>
+
+<p>可以嵌入一个控制器</p>
+
+<pre><code>{# app/Resources/views/base.html.twig #}
+
+{# ... #}
+&lt;div id="sidebar"&gt;
+    {{ render(controller('AcmeArticleBundle:Article:recentArticles',{ 'max': 3 })) }}
+&lt;/div&gt;
+</code></pre>
+
+<p>建议需要include时，直接引入一个控制器，而不要只引入一个模板</p>
+
+<h3 id="asynchronous-content-with-hincludejs">Asynchronous Content with hinclude.js</h3>
+
+<pre><code>{{ render_hinclude(controller('...')) }}
+{{ render_hinclude(url('...')) }}
+</code></pre>
+
+<h4 id="section-5">出现问题</h4>
+<p>1.在页面中没有反应</p>
+
+<h4 id="section-6">解决方法</h4>
+
+<h2 id="linking-to-pages">linking to pages</h2>
+
+<p>在模板中创建一个链接到另一个页面可以使用path(路由名，参数json数据) </p>
+
+<p>配置文件中的路由</p>
+
+<pre><code>示例1
+app/config/routing.yml
+_welcome:
+    path:     /
+        defaults: { _controller: AppBundle:Welcome:index }
+
+示例2
+app/config/routing.yml
+article_show:
+    path:     /article/{slug}
+        defaults: { _controller: AppBundle:Article:show }
+</code></pre>
+
+<p>twig模板中的链接</p>
+
+<pre><code>示例1
+
+&lt;a href="{{ path('_welcome') }}"&gt;Home&lt;/a&gt;
+
+示例2
+
+{# app/Resources/views/Article/recentList.html.twig #}
+{% for article in articles %}
+    &lt;a href="{{ path('article_show', {'slug': article.slug}) }}"&gt;
+            {{ article.title }}
+    &lt;/a&gt;
+{% endfor %}
+</code></pre>
+
+<p>在模板中也可以用url()函数获取URL</p>
+
+<pre><code>&lt;a href="{{ url('_welcome') }}"&gt;Home&lt;/a&gt;
+</code></pre>
+
+<h2 id="linking-to-assets">linking to Assets</h2>
+
+<p>可以使用asset的函数</p>
+
+<pre><code>&lt;img src="{{ asset('images/logo.png') }}" alt="Symfony!" /&gt;
+
+&lt;link href="{{ asset('css/blog.css') }}" rel="stylesheet" type="text/css" /&gt;
+
+可以设置版本号
+
+&lt;img src="{{ asset('images/logo.png', version='3.0') }}" alt="Symfony!" /&gt;
+
+可以设置显示为绝对目录
+
+&lt;img src="{{ asset('images/logo.png', absolute=true) }}" alt="Symfony!" /&gt;
+</code></pre>
+
+<h2 id="js">在模板中包含样式文件和js文件</h2>
+
+<pre><code>{# app/Resources/views/base.html.twig #}
+&lt;html&gt;
+&lt;head&gt;
+{# ... #}
+
+{% block stylesheets %}
+&lt;link href="{{ asset('css/main.css') }}" rel="stylesheet" /&gt;
+{% endblock %}
+&lt;/head&gt;
+&lt;body&gt;
+{# ... #}
+
+{% block javascripts %}
+&lt;script src="{{ asset('js/main.js') }}"&gt;&lt;/script&gt;
+{% endblock %}
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<h2 id="global-template-variables">Global Template Variables</h2>
+<p>全局的模板变量</p>
+
+<pre><code>* app.security - The security context.
+
+* app.user - The current user object.
+
+* app.request - The request object.
+
+* app.session - The session object.
+
+* app.environment - The current environment (dev, prod, etc).
+
+* app.debug - True if in debug mode. False otherwise.
+
+
+&lt;p&gt;Username: {{ app.user.username }}&lt;/p&gt;
+{% if app.debug %}
+    &lt;p&gt;Request method: {{ app.request.method }}&lt;/p&gt;
+    &lt;p&gt;Application Environment: {{ app.environment }}&lt;/p&gt;
+{% endif %}
+</code></pre>
+
+<h2 id="section-7">配置和使用模板服务</h2>
+
+<pre><code>return $this-&gt;render('Article/index.html.twig');
+
+直接调用render()方法相当于
+
+use Symfony\Component\HttpFoundation\Response;
+
+$engine = $this-&gt;container-&gt;get('templating');
+$content = $engine-&gt;render('Article/index.html.twig');
+
+return $response = new Response($content);
+</code></pre>
+
+<p>先获取模板引擎，在加载模板，在返回一个response、</p>
+
+<p>可以在配置文件中对模板引擎进行配置</p>
+
+<pre><code>app/config/config.yml
+framework:
+     ...
+        templating: { engines: ['twig'] }
+</code></pre>
+
+<h2 id="section-8">覆盖模板文件</h2>
+
+<p>当你下载了第三方bundle的时候，会需要覆盖它的默认的模板文件，因为symfony会去2个地方寻找模板</p>
+
+<p>示例</p>
+
+<pre><code>1. app/Resources/AcmeBlogBundle/views/Blog/index.html.twig
+
+2. src/Acme/BlogBundle/Resources/views/Blog/index.html.twig
+</code></pre>
+
+<p>这个时候在app的目录下的模板文件会覆盖掉src目录下的模板文件</p>
+
+<h2 id="section-9">三个等级的继承</h2>
+
+<pre><code>* Create a app/Resources/views/base.html.twig file that contains the main layout for your application (like in the previous example). Internally, this template is called base.html.twig;第一步创建一个基础模板
+
+* Create a template for each "section" of your site. For example, the blog functionality would have a template called Blog/layout.html.twig that contains only blog section-specific elements;第二步创建一个站点模板，它继承基础模板
+
+* Create individual templates for each page and make each extend the appropriate section template. For example, the "index" page would be called something close to Blog/index.html.twig and list the actual blog posts.创建单独的页面模板，他继承站点模板
+</code></pre>
+
+<h2 id="output-escaping">output escaping</h2>
+
+<pre><code>格式化输出，可以通过filter实现
+
+{{ article.body|raw }}
+</code></pre>
+
+<h2 id="section-10">可以对模板进行语法检查</h2>
+
+<pre><code> You can check by filename:
+$ php app/console twig:lint app/Resources/views/Article/recentList.html.twig
+
+ or by directory:
+$ php app/console twig:lint app/Resources/views
+</code></pre>
+
+<h2 id="section-11">模板的格式化</h2>
+
+<p>如展示一个XML模板</p>
+
+<pre><code>* XML template name: Article/index.xml.twig
+
+* XML template filename: index.xml.twig
+
+public function indexAction(Request $request)
+{
+        $format = $request-&gt;getRequestFormat();
+
+            return $this-&gt;render('Blog/index.'.$format.'.twig');
+}
+</code></pre>
+
+<p>在twig中创建一个pdf的链接</p>
+
+<pre><code>&lt;a href="{{ path('article_show', {'id': 123, '_format': 'pdf'}) }}"&gt;
+    PDF Version
+&lt;/a&gt;
+</code></pre>
+
+<p>By anni @Global City 2014-12-12</p>
+
+
+    </div>
+
+  
+    <ul class="tag_box inline">
+      <li><i class="glyphicon glyphicon-open"></i></li>
+      
+      
+
+
+  
+     
+    	<li><a href="#symfony-ref">
+    		symfony <span>4</span>
+    	</a></li>
+    
+  
+
+
+    </ul>
+    
+
+  
+    <ul class="tag_box inline">
+      <li><i class="glyphicon glyphicon-tags"></i></li>
+      
+      
+
+
+  
+     
+    	<li><a href="#php-ref">php <span>4</span></a></li>
+     
+    	<li><a href="#symfony-ref">symfony <span>4</span></a></li>
+     
+    	<li><a href="#template-ref">template <span>1</span></a></li>
+    
+  
+
+
+
+    </ul>
+    
+  
+    <hr>
+    <ul class="pagination">
+    
+      <li class="prev"><a href="/symfony/2014/12/11/symfony-controller" title="Symfony Controller">&laquo; Previous</a></li>
+    
+      <li><a href="">Archive</a></li>
+    
+      <li class="next disabled"><a>Next &rarr;</a>
+    
+    </ul>
+    <hr>
+    
+  </div>
+</div>
+
+
+      </div>
+
+    </div>
+
+    <div id="footer">
+      <div class="container">
+        <p>&copy; 2014 
+          with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
+          and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
+        </p>
+      </div>
+    </div>
+
+    
+
+
+    <!-- Latest compiled and minified JavaScript, requires jQuery 1.x (2.x not supported in IE8) -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="/assets/themes/bootstrap-3/bootstrap/js/bootstrap.min.js"></script>
+  </body>
+</html>
+

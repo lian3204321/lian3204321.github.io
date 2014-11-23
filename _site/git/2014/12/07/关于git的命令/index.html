@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <title>Categories</title>
+    <title>关于git的命令</title>
     
     <meta name="author" content="">
 
@@ -81,7 +81,7 @@
     
       
       	
-      	<li class="active"><a href="/categories.html" class="active">Categories</a></li>
+      	<li><a href="/categories.html">Categories</a></li>
       	
       
     
@@ -130,157 +130,105 @@
       <div class="container">
         
 <div class="page-header">
-  <h1>Categories </h1>
+  <h1>关于git的命令 <small>git command</small></h1>
 </div>
 
-<div class="row">
+<div class="row post-full">
   <div class="col-xs-12">
+    <div class="date">
+      <span>07 December 2014</span>
+    </div>
+    <div class="content">
+      <h1 id="git">一些关于git的命令记录</h1>
+
+<p>2014.12.07</p>
+
+<pre><code>git clone  地址   复制代码到本地
+   
+git pull 更新本地代码
+   
+git add 文件名 添加文件到暂存区
+
+git commit  分支名 添加暂存区到本地代码库
+
+git commit -a 将跟踪的文件添加到暂存区并提交到本地代码库
+
+   
+git push 将代码同步到线上
+
+git checkout  进行切换分支
+
+git branch 查看分支
+
+
+git reset HARD 获得的commit的编号  或者 
     
+    使用情况：先使用git log 获取commit的记录 ，再使用 git reset [commit 的编号] 
 
-<ul class="tag_box inline">
+git stash 进行快照 回到上一次commit 的状态
+
+git stash apply 回复stash快照
+
+git config --global credential.helper cache  在http 下push 时 存储密码
+
+git config --global credential.helper 'cache --timeout=3600'     改变存储密码的时间默认是15分钟
+</code></pre>
+
+<h2 id="by-anni">by anni</h2>
+
+    </div>
+
   
-  
+    <ul class="tag_box inline">
+      <li><i class="glyphicon glyphicon-open"></i></li>
+      
+      
 
 
   
-     
-    	<li><a href="#anything-ref">
-    		anything <span>1</span>
-    	</a></li>
-     
-    	<li><a href="#c-ref">
-    		c <span>2</span>
-    	</a></li>
      
     	<li><a href="#git-ref">
     		git <span>1</span>
     	</a></li>
+    
+  
+
+
+    </ul>
+    
+
+  
+    <ul class="tag_box inline">
+      <li><i class="glyphicon glyphicon-tags"></i></li>
+      
+      
+
+
+  
      
-    	<li><a href="#symfony-ref">
-    		symfony <span>4</span>
-    	</a></li>
-    
-  
-
-
-</ul>
-
-
- 
-  <h2 id="anything-ref">anything</h2>
-  <ul>
-      
-    
-
-
-  
-    
-      
-      	
-      	<li><a href="/anything/2014/12/07/I-Coming">I Coming</a></li>
-      	
-      
+    	<li><a href="#git-ref">git <span>1</span></a></li>
+     
+    	<li><a href="#command-ref">command <span>1</span></a></li>
     
   
 
 
 
-  </ul>
- 
-  <h2 id="c-ref">c</h2>
-  <ul>
-      
-    
-
-
-  
-    
-      
-      	
-      	<li><a href="/c/2014/12/08/c%E7%9A%84%E6%8C%87%E9%92%88">C的指针</a></li>
-      	
-      
+    </ul>
     
   
+    <hr>
+    <ul class="pagination">
     
-      
-      	
-      	<li><a href="/c/2014/12/07/hello-world">Hello World</a></li>
-      	
-      
+      <li class="prev"><a href="/c/2014/12/07/hello-world" title="Hello World">&laquo; Previous</a></li>
     
-  
-
-
-
-  </ul>
- 
-  <h2 id="git-ref">git</h2>
-  <ul>
-      
+      <li><a href="">Archive</a></li>
     
-
-
-  
+      <li class="next"><a href="/c/2014/12/08/c%E7%9A%84%E6%8C%87%E9%92%88" title="C的指针">Next &raquo;</a></li>
     
-      
-      	
-      	<li><a href="/git/2014/12/07/%E5%85%B3%E4%BA%8Egit%E7%9A%84%E5%91%BD%E4%BB%A4">关于git的命令</a></li>
-      	
-      
+    </ul>
+    <hr>
     
-  
-
-
-
-  </ul>
- 
-  <h2 id="symfony-ref">symfony</h2>
-  <ul>
-      
-    
-
-
-  
-    
-      
-      	
-      	<li><a href="/symfony/2014/12/12/symfony-Template">Symfony Template</a></li>
-      	
-      
-    
-  
-    
-      
-      	
-      	<li><a href="/symfony/2014/12/11/symfony-controller">Symfony Controller</a></li>
-      	
-      
-    
-  
-    
-      
-      	
-      	<li><a href="/symfony/2014/12/11/symfony-Routing">Symfony Routing</a></li>
-      	
-      
-    
-  
-    
-      
-      	
-      	<li><a href="/symfony/2014/12/10/symfony%E5%AE%89%E8%A3%85%E8%AE%B0%E5%BD%95">Symfony安装记录</a></li>
-      	
-      
-    
-  
-
-
-
-  </ul>
-
-
-
   </div>
 </div>
 

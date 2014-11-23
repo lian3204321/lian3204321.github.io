@@ -1,0 +1,539 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Symfony Routing</title>
+    
+    <meta name="author" content="">
+
+    <!-- Enable responsive viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap styles -->
+    <link href="/assets/themes/bootstrap-3/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Optional theme -->
+    <link href="/assets/themes/bootstrap-3/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
+    <!-- Sticky Footer -->
+    <link href="/assets/themes/bootstrap-3/bootstrap/css/bs-sticky-footer.css" rel="stylesheet">
+    
+    <!-- Custom styles -->
+    <link href="/assets/themes/bootstrap-3/css/style.css?body=1" rel="stylesheet" type="text/css" media="all">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <!-- Update these with your own images
+      <link rel="shortcut icon" href="images/favicon.ico">
+      <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+      <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+      <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+    -->
+
+    <!-- atom & rss feed -->
+    <link href="" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
+    <link href="" type="application/rss+xml" rel="alternate" title="Sitewide RSS Feed">
+
+  </head>
+
+  <body>
+    <div id="wrap">
+      <nav class="navbar navbar-default" role="navigation">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#jb-navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">anni baby home</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="jb-navbar-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+            
+
+
+  
+    
+      
+      	
+      	<li><a href="/archive.html">Archive</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/categories.html">Categories</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/pages.html">Pages</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/tags.html">Tags</a></li>
+      	
+      
+    
+  
+
+
+
+          </ul>
+          <form class="navbar-form navbar-right" role="search">
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="Search">
+            </div>
+            <button type="submit" class="btn btn-default">Submit</button>
+          </form>
+        </div><!-- /.navbar-collapse -->
+      </nav>
+
+      <div class="container">
+        
+<div class="page-header">
+  <h1>Symfony Routing </h1>
+</div>
+
+<div class="row post-full">
+  <div class="col-xs-12">
+    <div class="date">
+      <span>11 December 2014</span>
+    </div>
+    <div class="content">
+      <h1 id="routing">Routing</h1>
+
+<h2 id="section">学习目的</h2>
+
+<ul>
+  <li>
+    <p>Create complex routes that map to controllers</p>
+  </li>
+  <li>
+    <p>Generate URLs inside templates and controllers</p>
+  </li>
+  <li>
+    <p>Load routing resources from bundles (or anywhere else)</p>
+  </li>
+  <li>
+    <p>Debug your routes</p>
+  </li>
+</ul>
+
+<h4 id="annotation">一个annotation的示例</h4>
+
+<pre><code>// src/AppBundle/Controller/BlogController.php
+namespace AppBundle\Controller;
+
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+
+class BlogController extends Controller
+{
+        /**
+         * @Route("/blog/{slug}")
+         */
+        public function showAction($slug)
+        {
+                                      // ...
+        }
+}
+</code></pre>
+
+<p>该路由指向/blog  传入一个$slug的参数</p>
+
+<h2 id="routes">创造Routes</h2>
+<p>在config文件夹中的config.yml文件中包含入routing.yml文件</p>
+
+<pre><code>app/config/config.yml
+framework:
+     ...
+    router: { resource: "%kernel.root_dir%/config/routing.yml" }
+</code></pre>
+
+<h2 id="basic-route-configuration">basic route configuration</h2>
+
+<pre><code>class MainController extends Controller
+{
+        /**
+         * @Route("/")
+         */
+         public function homepageAction()
+         {
+                                      // ...
+         }
+}
+</code></pre>
+
+<p>一个基础的路由指向  (/)  maps it to the AppBundle:Main:homepage controller</p>
+
+<h3 id="section-1">路由参数</h3>
+
+<p>可以在给路由分配参数的时候指定默认值</p>
+
+<pre><code>/**
+ * @Route("/blog/{page}", defaults={"page" = 1})
+  */
+  public function indexAction($page)
+  {
+          // ...
+  }
+  
+
+/**
+ * @Route("/blog/{slug}")
+ */
+public function showAction($slug)
+{
+    // ...
+}
+</code></pre>
+
+<p>当出现2个同样的路由请求时，但是参数类型不同例如{page} = 2,{slug} = “my-blog-post” ，可以对参数进行类型限制</p>
+
+<pre><code>/**
+ * @Route("/blog/{page}", defaults={"page": 1}, requirements={"page": "\d+"})
+  */
+  public function indexAction($page)
+  {
+          // ...
+  }
+</code></pre>
+
+<p>通过\d+限制了page只可以接受到为数字的值</p>
+
+<p>也可以对参数进行选择限制，规定路由后所带的参数的值,如下例中的 限制参数的值只可以为en和fr</p>
+
+<pre><code>class MainController extends Controller
+{
+    /**
+     * @Route("/{_locale}", defaults={"_locale": "en"}, requirements={"_locale": "en|fr"})
+     */
+    public function homepageAction($_locale)
+                          {
+                                  }
+}
+</code></pre>
+
+<p>该例子中$_locale的值默认为en ，限制为只可以为en和fr的值</p>
+
+<p>同样可以限制HTTP请求的方式</p>
+
+<pre><code>// src/AppBundle/Controller/MainController.php
+namespace AppBundle\Controller;
+
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+// ...
+
+class MainController extends Controller
+{
+/**
+ * @Route("/contact")
+ * @Method("GET")
+ */
+public function contactAction()
+{
+    // ... display contact form
+}
+
+/**
+ * @Route("/contact")
+ * @Method("POST")
+ */
+public function processContactAction()
+{
+    // ... process contact form
+}
+}
+</code></pre>
+
+<p>可以限制一个请求为get 方式 或者为 post 方式 ，可以充分利用http协议中的请求动作,get展示表单，post方式接收处理表单</p>
+
+<p>在用@Method()进行请求动作判断时需要 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;</p>
+
+<h3 id="match-a-route-based-on-the-host">可以Match a Route Based on the Host</h3>
+
+<h3 id="condition">在配置文件中限定一个路由的访问条件，用condition项</h3>
+
+<pre><code>contact:
+path:     /contact
+defaults: { _controller: AcmeDemoBundle:Main:contact }
+condition: "context.getMethod() in ['GET', 'HEAD'] and request.headers.get('User-Agent') matches '/firefox/i'"
+</code></pre>
+
+<p>这个condition在缓存中生成的php代码如下</p>
+
+<pre><code>if (rtrim($pathinfo, '/contact') === '' &amp;&amp; (
+        in_array($context-&gt;getMethod(), array(0 =&gt; "GET", 1 =&gt; "HEAD"))
+        &amp;&amp; preg_match("/firefox/i", $request-&gt;headers-&gt;get("User-Agent"))
+        )) {
+// ...
+}
+</code></pre>
+
+<h3 id="routing-1">一个完整的routing例子</h3>
+
+<pre><code>class ArticleController extends Controller
+{
+    /**
+     * @Route(
+     *     "/articles/{_locale}/{year}/{title}.{_format}",
+     *     defaults= {"_format": "html"},
+     *     requirements= {"_locale": "en|fr", "_format": "html|rss", "year": "\d+"}
+     * )
+     */
+    public function showAction($_locale, $year, $title)
+    {
+    }
+}
+</code></pre>
+
+<p>*注意defaults 后面跟的是= 而不是 :  ,因为官网貌似写错了</p>
+
+<h3 id="section-2">特殊的路由参数</h3>
+
+<pre><code>_controller:As you've seen, this parameter is used to determine which controller is executed when the route is matched;
+
+_format:Used to set the request format;
+
+_locale:Used to set the locale on the request
+</code></pre>
+
+<p>可以在config文件夹中routing.yml文件中定义_controller</p>
+
+<pre><code>app/config/routing.yml
+    hello:
+        path:     /hello
+        defaults: { _controller: acme.hello.controller:indexAction }
+</code></pre>
+
+<h3 id="section-3">路由前缀</h3>
+
+<p>可以在定义路由的时候加上前缀</p>
+
+<pre><code>app/config/routing.yml
+app:
+    resource: "@AppBundle/Controller/"
+    type:     annotation
+    prefix:   /site
+</code></pre>
+
+<h3 id="section-4">可以为路由指定域名</h3>
+
+<pre><code>acme_hello:
+    resource: "@AcmeHelloBundle/Resources/config/routing.yml"
+    host:     "hello.example.com"
+</code></pre>
+
+<h2 id="debug">对路由进行debug的测试</h2>
+
+<pre><code>$ php app/console debug:router
+</code></pre>
+
+<p>根据路由名称，获取相关信息</p>
+
+<pre><code>$ php app/console debug:router 路由名称
+</code></pre>
+
+<p>可以写一个url进行测试看匹配到什么路由</p>
+
+<pre><code>$ php app/console router:match /blog/my-latest-post
+</code></pre>
+
+<p>获取一个uri对应的路由</p>
+
+<pre><code>$param = $this -&gt; get('router') -&gt;match('/demo/hello/2014');
+var_dump($param);
+</code></pre>
+
+<p>结果为</p>
+
+<pre><code>array (size=3)
+  '_controller' =&gt; string 'Acme\DemoBundle\Controller\DemoController::helloAction' (length=54)
+    'name' =&gt; string '2014' (length=4)
+      '_route' =&gt; string '_demo_hello' (length=11)
+</code></pre>
+
+<p>获取一个路由对应的uri</p>
+
+<pre><code>$uri = $this -&gt; get('router') -&gt; generate('_main_anni');
+var_dump($uri);
+</code></pre>
+
+<p>结果为</p>
+
+<pre><code>string '/demo/abc' (length=9)
+</code></pre>
+
+<p>获取一个路由对应的url（在继承了baseController后就可以用generateURl方法）</p>
+
+<pre><code>$url = $this  -&gt;generateUrl('_demo_contact');
+ echo "&lt;br&gt;";
+var_dump($url);
+</code></pre>
+
+<p>结果为</p>
+
+<pre><code>string '/demo/contact' (length=13)
+</code></pre>
+
+<p>获取一个包含域名的地址如下</p>
+
+<pre><code>$url = $this  -&gt;generateUrl('_demo_contact',array(),true);
+echo "&lt;br&gt;";
+var_dump($url);
+</code></pre>
+
+<p>结果为</p>
+
+<pre><code>string 'http://test.sy.com/demo/contact' (length=31)
+</code></pre>
+
+<p>如果没有继承symfony的baseController,可以获取container后进行获取url</p>
+
+<pre><code>$url = $this-&gt;container-&gt;get('router')-&gt;generate(
+    'blog_show',
+    array('slug' =&gt; 'my-blog-post')
+    );
+</code></pre>
+
+<p>当在js中使用ajax请求的时候获取uri地址的时候可以使用FOSJsRoutingBundle</p>
+
+<p>当加载该bundle后可以直接在js中使用router</p>
+
+<pre><code>var url = Routing.generate(
+    'blog_show',
+        {"slug": 'my-blog-post'}
+        );
+</code></pre>
+
+<p>在模板中获取一个uri</p>
+
+<pre><code>&lt;a href="{ { url('blog_show', {'slug': 'my-blog-post'}) } }"&gt;
+ 
+ Read this blog post.
+
+&lt;/a&gt;
+</code></pre>
+
+
+    </div>
+
+  
+    <ul class="tag_box inline">
+      <li><i class="glyphicon glyphicon-open"></i></li>
+      
+      
+
+
+  
+     
+    	<li><a href="#symfony-ref">
+    		symfony <span>4</span>
+    	</a></li>
+    
+  
+
+
+    </ul>
+    
+
+  
+    <ul class="tag_box inline">
+      <li><i class="glyphicon glyphicon-tags"></i></li>
+      
+      
+
+
+  
+     
+    	<li><a href="#php-ref">php <span>4</span></a></li>
+     
+    	<li><a href="#symfony-ref">symfony <span>4</span></a></li>
+     
+    	<li><a href="#routing-ref">routing <span>1</span></a></li>
+    
+  
+
+
+
+    </ul>
+    
+  
+    <hr>
+    <ul class="pagination">
+    
+      <li class="prev"><a href="/symfony/2014/12/10/symfony%E5%AE%89%E8%A3%85%E8%AE%B0%E5%BD%95" title="Symfony安装记录">&laquo; Previous</a></li>
+    
+      <li><a href="">Archive</a></li>
+    
+      <li class="next"><a href="/symfony/2014/12/11/symfony-controller" title="Symfony Controller">Next &raquo;</a></li>
+    
+    </ul>
+    <hr>
+    
+  </div>
+</div>
+
+
+      </div>
+
+    </div>
+
+    <div id="footer">
+      <div class="container">
+        <p>&copy; 2014 
+          with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
+          and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
+        </p>
+      </div>
+    </div>
+
+    
+
+
+    <!-- Latest compiled and minified JavaScript, requires jQuery 1.x (2.x not supported in IE8) -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="/assets/themes/bootstrap-3/bootstrap/js/bootstrap.min.js"></script>
+  </body>
+</html>
+

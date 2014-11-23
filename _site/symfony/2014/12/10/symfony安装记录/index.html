@@ -1,0 +1,404 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Symfony安装记录</title>
+    
+    <meta name="author" content="">
+
+    <!-- Enable responsive viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap styles -->
+    <link href="/assets/themes/bootstrap-3/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Optional theme -->
+    <link href="/assets/themes/bootstrap-3/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
+    <!-- Sticky Footer -->
+    <link href="/assets/themes/bootstrap-3/bootstrap/css/bs-sticky-footer.css" rel="stylesheet">
+    
+    <!-- Custom styles -->
+    <link href="/assets/themes/bootstrap-3/css/style.css?body=1" rel="stylesheet" type="text/css" media="all">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <!-- Update these with your own images
+      <link rel="shortcut icon" href="images/favicon.ico">
+      <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+      <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+      <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+    -->
+
+    <!-- atom & rss feed -->
+    <link href="" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
+    <link href="" type="application/rss+xml" rel="alternate" title="Sitewide RSS Feed">
+
+  </head>
+
+  <body>
+    <div id="wrap">
+      <nav class="navbar navbar-default" role="navigation">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#jb-navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">anni baby home</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="jb-navbar-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+            
+
+
+  
+    
+      
+      	
+      	<li><a href="/archive.html">Archive</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/categories.html">Categories</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/pages.html">Pages</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/tags.html">Tags</a></li>
+      	
+      
+    
+  
+
+
+
+          </ul>
+          <form class="navbar-form navbar-right" role="search">
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="Search">
+            </div>
+            <button type="submit" class="btn btn-default">Submit</button>
+          </form>
+        </div><!-- /.navbar-collapse -->
+      </nav>
+
+      <div class="container">
+        
+<div class="page-header">
+  <h1>Symfony安装记录 </h1>
+</div>
+
+<div class="row post-full">
+  <div class="col-xs-12">
+    <div class="date">
+      <span>10 December 2014</span>
+    </div>
+    <div class="content">
+      <h2 id="symfony">安装symfony</h2>
+
+<pre><code>$ curl -s https://getcomposer.org/installer | php   下载composer文件
+</code></pre>
+
+<p>执行下载的composer文件进行安装</p>
+
+<pre><code>$ php composer.phar create-project symfony/framework-standard-edition /path/to/webroot/Symfony '~2.6'
+通过composer.phar进行symfony的安装其中/path/to/webroot/symfony指向的是项目目录，可以在命令后加-vvv 来显示安装细节
+</code></pre>
+
+<h4 id="section">出现问题:</h4>
+<ol>
+  <li>安装时项目目录不是一个空目录，报错. </li>
+</ol>
+
+<h4 id="section-1">解决方法：</h4>
+<ol>
+  <li>重新建一个空文件夹</li>
+</ol>
+
+<h2 id="nginx">配置nginx</h2>
+
+<pre><code>server {
+    server_name domain.tld www.domain.tld;
+    root /var/www/project/web;
+
+    location / {
+     # try to serve file directly, fallback to app.php
+     try_files $uri /app.php$is_args$args;
+  }
+    # DEV
+  # This rule should only be placed on your development environment
+  # In production, don't include this and don't deploy app_dev.php or config.php
+    location ~ ^/(app_dev|config)\.php(/|$) {
+        fastcgi_pass unix:/var/run/php5-fpm.sock;
+       fastcgi_split_path_info ^(.+\.php)(/.*)$;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+       fastcgi_param HTTPS off;
+    }
+    # PROD
+location ~ ^/app\.php(/|$) {
+    fastcgi_pass unix:/var/run/php5-fpm.sock;
+    fastcgi_split_path_info ^(.+\.php)(/.*)$;
+    include fastcgi_params;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    fastcgi_param HTTPS off;
+# Prevents URIs that include the front controller. This will 404:
+# http://domain.tld/app.php/some-path
+# Remove the internal directive to allow URIs like this
+   internal;
+    }
+
+        error_log /var/log/nginx/project_error.log;
+        access_log /var/log/nginx/project_access.log;
+ }
+</code></pre>
+
+<h4 id="section-2">出现问题：</h4>
+<p>1.访问网站是出现下载</p>
+
+<h4 id="section-3">解决方法：</h4>
+<p>1.指向出了问题配的开发环境应该指向aPP_dev.php,不应该指向app.php文件</p>
+
+<h2 id="bundle">创建一个新的bundle</h2>
+
+<p>输入命令：
+    $ php app/console generate:bundle –namespace=Acme/DemoBundle –format=yml   //创建在Acme/DemoBundle的目录下面，配置文件格式是yml格式</p>
+
+<p>生成的bundle的在app/AppKernel.php文件中的registerBundles方法中返回</p>
+
+<h3 id="section-4">创建一个路由</h3>
+
+<p>创建路由的2种方式：</p>
+
+<pre><code>1. anootation方式，通过注释进行路由设置
+
+_demo:
+    resource: "@AcmeDemoBundle/Controller/DemoController.php"
+    type:     annotation
+    prefix:   /demo
+
+/demo为前置路由
+
+2.直接在routing.yml文件中的直接写path路由,default直接指向一个方法,可以在路由中直接对方法中传入$limit变量的值
+
+_welcome:
+    path:     /random/{limit}
+    defaults: { _controller: AcmeDemoBundle:Welcome:index }
+
+path直接写入路由信息,指向控制器的一个方法action
+</code></pre>
+
+<h3 id="section-5">创建一个控制器</h3>
+
+<p>在对应的bundle的目录中的controller目录中创建控制器,控制器中的方法必须要有一个response，如Response对象或者一个模板</p>
+
+<pre><code>class AnniController extends Controller{
+
+        public function indexAction($hello){
+
+            return new Response("$hello , is coming");
+        }
+}
+</code></pre>
+
+<h4 id="section-6">出现问题：</h4>
+
+<p>1.返回了一个respose对象后还是报错 提示需要一个response对象</p>
+
+<h4 id="section-7">解决方法:</h4>
+
+<h3 id="section-8">创建一个模板</h3>
+
+<p>创建模板的方式：</p>
+
+<pre><code>1.直接使用render方法引入一个模板
+    public function xmanAction(){
+        $name = 'wolaile';
+        return $this -&gt; render("AcmeDemoBundle:Anni:xman.html.twig" , array('xman' =&gt; $name));
+    }
+
+2.使用annotation进行引入模板，可以使用@Template()引入模板如果不填则默认引入AcmeDemoBundle:Demo:helloanni.html.twig,填了则引入对应模板
+
+/**
+ * @route("/abc", name="_main_anni")
+ * @Template("AcmeDemoBundle:Demo:abc.html.twig")
+ * */
+public function helloanniAction(){
+    $anni = 'dilisa';
+    return array('name' =&gt; $anni);
+}
+</code></pre>
+
+<p>模板的调用名称的组成为：BundleName:ControllerName:TemplateName
+对应的目录结构为/path/to/BundleName/Resources/views/ControllerName/TemplateName
+其中ControllerName如果为空则指向的目录 为/path/to/BundleName/Resources/views/TemplateName  一般用来设置父级模板
+因为使用的是twig模板，可以使用extends和block进行模板部署</p>
+
+<h2 id="section-9">目录结构</h2>
+
+<pre><code>* app/: This directory contains the application configuration; 包含了项目的配置文件，缓存，日志文件，appKernel核心代码，基础模板文件
+
+* src/: All the project PHP code is stored under this directory; 所有的项目代码全部在此目录中
+
+* vendor/: Any vendor libraries are placed here by convention; 存放所有的包文件
+
+* web/: This is the web root directory and contains any publicly accessible files;这个是web服务器指向的目录，存放站点文件
+</code></pre>
+
+<h3 id="bundle-1">Bundle的目录结构</h3>
+
+<pre><code>* Controller/ contains the controllers of the bundle (e.g. RandomController.php);控制器目录
+
+* DependencyInjection/ holds certain dependency injection extension classes, which may import service configuration, register compiler passes or more (this directory is not necessary); 没用过不清楚
+
+* Resources/config/ houses configuration, including routing configuration (e.g. routing.yml);放bundle的配置文件，也可以把配置写在app/config目录中统一管理
+
+* Resources/views/ holds templates organized by controller name (e.g. Hello/index.html.twig);存放的是模板文件
+
+* Resources/public/ contains web assets (images, stylesheets, etc) and is copied or symbolically linked into the project web/ directory via the assets:install console command; 放样式文件和JS文件
+
+* Tests/ holds all tests for the bundle.bundle的一些测试 ###配置文件中的结构
+app/config/config.yml
+imports:
+- { resource: parameters.yml }
+- { resource: security.yml }
+
+framework:
+secret:          "%secret%"
+router:          { resource: "%kernel.root_dir%/config/routing.yml" }
+ ...
+
+ Twig Configuration
+twig:
+debug:            "%kernel.debug%"
+strict_variables: "%kernel.debug%"
+</code></pre>
+
+<h2 id="by-anni-global-city-2014-12-11">By anni @Global City 2014-12-11</h2>
+
+
+    </div>
+
+  
+    <ul class="tag_box inline">
+      <li><i class="glyphicon glyphicon-open"></i></li>
+      
+      
+
+
+  
+     
+    	<li><a href="#symfony-ref">
+    		symfony <span>4</span>
+    	</a></li>
+    
+  
+
+
+    </ul>
+    
+
+  
+    <ul class="tag_box inline">
+      <li><i class="glyphicon glyphicon-tags"></i></li>
+      
+      
+
+
+  
+     
+    	<li><a href="#php-ref">php <span>4</span></a></li>
+     
+    	<li><a href="#symfony-ref">symfony <span>4</span></a></li>
+    
+  
+
+
+
+    </ul>
+    
+  
+    <hr>
+    <ul class="pagination">
+    
+      <li class="prev"><a href="/c/2014/12/08/c%E7%9A%84%E6%8C%87%E9%92%88" title="C的指针">&laquo; Previous</a></li>
+    
+      <li><a href="">Archive</a></li>
+    
+      <li class="next"><a href="/symfony/2014/12/11/symfony-Routing" title="Symfony Routing">Next &raquo;</a></li>
+    
+    </ul>
+    <hr>
+    
+  </div>
+</div>
+
+
+      </div>
+
+    </div>
+
+    <div id="footer">
+      <div class="container">
+        <p>&copy; 2014 
+          with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
+          and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
+        </p>
+      </div>
+    </div>
+
+    
+
+
+    <!-- Latest compiled and minified JavaScript, requires jQuery 1.x (2.x not supported in IE8) -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="/assets/themes/bootstrap-3/bootstrap/js/bootstrap.min.js"></script>
+  </body>
+</html>
+

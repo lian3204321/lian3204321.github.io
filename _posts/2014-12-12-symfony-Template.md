@@ -5,7 +5,7 @@ tags: [php,symfony,template]
 ---
 
 #Template
-
+{% raw %}
 使用的是twig模板
 
     * \{\{ ... \}\}: "Says something": prints a variable or the result of an expression to the template; 输出
@@ -390,7 +390,7 @@ twig模板中的链接
     <a href="{{ path('article_show', {'id': 123, '_format': 'pdf'}) }}">
         PDF Version
     </a>
-
+{% endraw %}
 By anni @Global City 2014-12-12
 
 

@@ -5,10 +5,1296 @@
         <description>anni baby home - </description>
         <link>http://lian3204321.github.io/rss.xml</link>
         <link>http://lian3204321.github.io</link>
-        <lastBuildDate>2014-11-21T22:38:39+08:00</lastBuildDate>
-        <pubDate>2014-11-21T22:38:39+08:00</pubDate>
+        <lastBuildDate>2014-11-24T04:22:39+08:00</lastBuildDate>
+        <pubDate>2014-11-24T04:22:39+08:00</pubDate>
         <ttl>1800</ttl>
 
+
+        <item>
+                <title>Symfony Template</title>
+                <description>&lt;h1 id=&quot;template&quot;&gt;Template&lt;/h1&gt;
+
+&lt;p&gt;使用的是twig模板&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;* \{\{ ... \}\}: &quot;Says something&quot;: prints a variable or the result of an expression to the template; 输出
+
+* \{\% ... \%\}: &quot;Does something&quot;: a tag that controls the logic of the template; it is used to execute statements such as for-loops for example. 进行逻辑控制
+
+* { # ... # }: &quot;Comment something&quot;: it&#39;s the equivalent of the PHP /* comment */ syntax. It&#39;s used to add single or multi-line comments. The content of the comments isn&#39;t included in the rendered pages. 进行注释
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可以使用过滤器&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;{{ title|upper }}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可以使用函数&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;{% for i in 0..10 %}
+    &amp;lt;div class=&quot;{{ cycle([&#39;odd&#39;, &#39;even&#39;], i) }}&quot;&amp;gt;
+        &amp;lt;!-- some HTML here --&amp;gt;
+    &amp;lt;/div&amp;gt;
+{% endfor %}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;twig&quot;&gt;twig模板的缓存&lt;/h2&gt;
+
+&lt;p&gt;在dev环境下打开debug模式时twig是不会做模板缓存的&lt;/p&gt;
+
+&lt;h2 id=&quot;section&quot;&gt;模板的继承和布局&lt;/h2&gt;
+
+&lt;p&gt;布局一般使用block，因为一个网站的页头页脚不会经常发生变化.
+下例为一个基础的布局&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;{# app/Resources/views/base.html.twig #}
+&amp;lt;!DOCTYPE html&amp;gt;
+&amp;lt;html&amp;gt;
+&amp;lt;head&amp;gt;
+&amp;lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot; /&amp;gt;
+&amp;lt;title&amp;gt;{% block title %}Test Application{% endblock %}&amp;lt;/title&amp;gt;
+&amp;lt;/head&amp;gt;
+&amp;lt;body&amp;gt;
+&amp;lt;div id=&quot;sidebar&quot;&amp;gt;
+{% block sidebar %}
+&amp;lt;ul&amp;gt;
+&amp;lt;li&amp;gt;&amp;lt;a href=&quot;/&quot;&amp;gt;Home&amp;lt;/a&amp;gt;&amp;lt;/li&amp;gt;
+&amp;lt;li&amp;gt;&amp;lt;a href=&quot;/blog&quot;&amp;gt;Blog&amp;lt;/a&amp;gt;&amp;lt;/li&amp;gt;
+&amp;lt;/ul&amp;gt;
+{% endblock %}
+&amp;lt;/div&amp;gt;
+
+&amp;lt;div id=&quot;content&quot;&amp;gt;
+{% block body %}{% endblock %}
+&amp;lt;/div&amp;gt;
+&amp;lt;/body&amp;gt;
+&amp;lt;/html&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可以重写上面的基础模板
+利用extends进行继承&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;{# app/Resources/views/Blog/index.html.twig #}
+{% extends &#39;base.html.twig&#39; %}
+
+{% block title %}My cool blog posts{% endblock %}
+
+{% block body %}
+    {% for entry in blog_entries %}
+            &amp;lt;h2&amp;gt;{{ entry.title }}&amp;lt;/h2&amp;gt;
+            &amp;lt;p&amp;gt;{{ entry.body }}&amp;lt;/p&amp;gt;
+    {% endfor %}
+{% endblock %}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这样就将base.html.twig中的title block  和 body block 进行了替换&lt;/p&gt;
+
+&lt;h3 id=&quot;section-1&quot;&gt;使用模板继承的注意点&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;* If you use {% extends %} in a template, it must be the first tag in that template; 当使用extends继承模板时 一个tag标签必须是extends
+
+* The more {% block %} tags you have in your base templates, the better. Remember, child templates don&#39;t have to define all parent blocks, so create as many blocks in your base templates as you want and give each a sensible default. The more blocks your base templates have, the more flexible your layout will be; 一个基础的模板中，定义越多的block则你的基础模板就越灵活
+
+* If you find yourself duplicating content in a number of templates, it probably means you should move that content to a {% block %} in a parent template. In some cases, a better solution may be to move the content to a new template and include it (see Including other Templates);  当你发现一段内容反复的出现在你的子模板中，则意味着你需要将这个内容加入到你的父模板中，或者将这个内容提出来作为一个模板，然后用include标签 来包含这个模板
+
+* If you need to get the content of a block from the parent template, you can use the {{ parent() }} function. This is useful if you want to add to the contents of a parent block instead of completely overriding it: 如果你需要引入父模板中对应的block中的内容时，可以使用parent()方法进行输出,如下例
+
+{% block sidebar %}
+    &amp;lt;h3&amp;gt;Table of Contents&amp;lt;/h3&amp;gt;
+
+        {# ... #}
+
+    {{ parent() }}
+{% endblock %}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;section-2&quot;&gt;模板的命名的位置&lt;/h2&gt;
+
+&lt;p&gt;模板一般会存放在2个不同的地方&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;* app/Resources/views/: The applications views directory can contain application-wide base templates (i.e. your application&#39;s layouts and templates of the application bundle) as well as templates that override third party bundle templates 该目录下存放的是项目的基础模板，或者是bundle的基础模板
+
+* path/to/bundle/Resources/views/: Each third party bundle houses its templates in its Resources/views/ directory (and subdirectories). When you plan to share your bundle, you should put the templates in the bundle instead of the app/ directory. 这个目录存放的是项目的子模板。
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;bundle&quot;&gt;在bundle中引入一个模板&lt;/h3&gt;
+
+&lt;p&gt;对于在bundle中的模板，symfony使用的是 bundle:directory:filename的语法来访问模板&lt;/p&gt;
+
+&lt;p&gt;举例说明：AcmeBlogBundle:Blog:index.html.twig&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;AcmeBlogBundle: (bundle) the template lives inside the AcmeBlogBundle  代表的是acmeBlogBundle,目录位置为src/Acme/BlogBundle/Resource/views目录
+
+Blog: (directory) indicates that the template lives inside the Blog subdirectory of Resources/views;Blog代表的是view目录下的Blog的目录
+
+index.html.twig: (filename) the actual name of the file is index.html.twig. 代表的是文件名
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;下例 AcmeBlogBundle::layout.html.twig&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;layout.html.twig这个文件直接存在于src/Acme/BlogBundle/Resource/views目录下
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;section-3&quot;&gt;模板的后缀&lt;/h3&gt;
+
+&lt;p&gt;不同的后缀代表不同的解析引擎,和格式化的方式&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Blog/index.html.twig   twig的引擎   html格式化方式
+Blog/index.html.php    php的引擎    html格式化方式
+Blog/index.css.twig    twig引擎     css的格式化方式
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;tags-and-helpers&quot;&gt;Tags and Helpers&lt;/h2&gt;
+
+&lt;h3 id=&quot;including-other-templates&quot;&gt;Including other Templates&lt;/h3&gt;
+
+&lt;p&gt;通过向包含的模板中传如不同的参数来实现展示内容的不同,如下例&lt;/p&gt;
+
+&lt;p&gt;一个包含变量的模板,其中有变量article&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;{# app/Resources/views/Article/articleDetails.html.twig #}
+&amp;lt;h2&amp;gt;{{ article.title }}&amp;lt;/h2&amp;gt;
+&amp;lt;h3 class=&quot;byline&quot;&amp;gt;by {{ article.authorName }}&amp;lt;/h3&amp;gt;
+
+&amp;lt;p&amp;gt;
+    {{ article.body }}
+&amp;lt;/p&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;一个需要引入article的模板&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;{# app/Resources/views/Article/list.html.twig #}
+{% extends &#39;layout.html.twig&#39; %}
+
+{% block body %}
+    &amp;lt;h1&amp;gt;Recent Articles&amp;lt;h1&amp;gt;
+
+        {% for article in articles %}
+                {{ include(&#39;Article/articleDetails.html.twig&#39;, { &#39;article&#39;: article }) }}
+        {% endfor %}
+
+{% endblock %}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;通过include一个模板并且传入一个article变量 ，在articleDetail.html.twig模板中是可以使用list.html.twig模板中定义的变量，如果在include()方法中设置with_context 为false时则不能使用外部的模板变量&lt;/p&gt;
+
+&lt;h3 id=&quot;section-4&quot;&gt;嵌入控制器&lt;/h3&gt;
+
+&lt;p&gt;当你需要进行数据库操作或者一些复杂的逻辑操作的时候，一个模板就不足以完成任务，你需要在模板里面嵌入一个控制器已完成任务&lt;/p&gt;
+
+&lt;p&gt;一个可以嵌入的控制器&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// src/AppBundle/Controller/ArticleController.php
+namespace AppBundle\Controller;
+
+// ...
+
+class ArticleController extends Controller
+{
+public function recentArticlesAction($max = 3)
+{
+    // make a database call or other logic
+    // to get the &quot;$max&quot; most recent articles
+    $articles = ...;
+
+    return $this-&amp;gt;render(
+            &#39;Article/recentList.html.twig&#39;,
+            array(&#39;articles&#39; =&amp;gt; $articles)
+            );
+}
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;render的模板为&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;{# app/Resources/views/Article/recentList.html.twig #}
+{% for article in articles %}
+    &amp;lt;a href=&quot;/article/{{ article.slug }}&quot;&amp;gt;
+            {{ article.title }}
+    &amp;lt;/a&amp;gt;
+{% endfor %}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可以嵌入一个控制器&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;{# app/Resources/views/base.html.twig #}
+
+{# ... #}
+&amp;lt;div id=&quot;sidebar&quot;&amp;gt;
+    {{ render(controller(&#39;AcmeArticleBundle:Article:recentArticles&#39;,{ &#39;max&#39;: 3 })) }}
+&amp;lt;/div&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;建议需要include时，直接引入一个控制器，而不要只引入一个模板&lt;/p&gt;
+
+&lt;h3 id=&quot;asynchronous-content-with-hincludejs&quot;&gt;Asynchronous Content with hinclude.js&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;{{ render_hinclude(controller(&#39;...&#39;)) }}
+{{ render_hinclude(url(&#39;...&#39;)) }}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&quot;section-5&quot;&gt;出现问题&lt;/h4&gt;
+&lt;p&gt;1.在页面中没有反应&lt;/p&gt;
+
+&lt;h4 id=&quot;section-6&quot;&gt;解决方法&lt;/h4&gt;
+
+&lt;h2 id=&quot;linking-to-pages&quot;&gt;linking to pages&lt;/h2&gt;
+
+&lt;p&gt;在模板中创建一个链接到另一个页面可以使用path(路由名，参数json数据) &lt;/p&gt;
+
+&lt;p&gt;配置文件中的路由&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;示例1
+app/config/routing.yml
+_welcome:
+    path:     /
+        defaults: { _controller: AppBundle:Welcome:index }
+
+示例2
+app/config/routing.yml
+article_show:
+    path:     /article/{slug}
+        defaults: { _controller: AppBundle:Article:show }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;twig模板中的链接&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;示例1
+
+&amp;lt;a href=&quot;{{ path(&#39;_welcome&#39;) }}&quot;&amp;gt;Home&amp;lt;/a&amp;gt;
+
+示例2
+
+{# app/Resources/views/Article/recentList.html.twig #}
+{% for article in articles %}
+    &amp;lt;a href=&quot;{{ path(&#39;article_show&#39;, {&#39;slug&#39;: article.slug}) }}&quot;&amp;gt;
+            {{ article.title }}
+    &amp;lt;/a&amp;gt;
+{% endfor %}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;在模板中也可以用url()函数获取URL&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;a href=&quot;{{ url(&#39;_welcome&#39;) }}&quot;&amp;gt;Home&amp;lt;/a&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;linking-to-assets&quot;&gt;linking to Assets&lt;/h2&gt;
+
+&lt;p&gt;可以使用asset的函数&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;img src=&quot;{{ asset(&#39;images/logo.png&#39;) }}&quot; alt=&quot;Symfony!&quot; /&amp;gt;
+
+&amp;lt;link href=&quot;{{ asset(&#39;css/blog.css&#39;) }}&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot; /&amp;gt;
+
+可以设置版本号
+
+&amp;lt;img src=&quot;{{ asset(&#39;images/logo.png&#39;, version=&#39;3.0&#39;) }}&quot; alt=&quot;Symfony!&quot; /&amp;gt;
+
+可以设置显示为绝对目录
+
+&amp;lt;img src=&quot;{{ asset(&#39;images/logo.png&#39;, absolute=true) }}&quot; alt=&quot;Symfony!&quot; /&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;js&quot;&gt;在模板中包含样式文件和js文件&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;{# app/Resources/views/base.html.twig #}
+&amp;lt;html&amp;gt;
+&amp;lt;head&amp;gt;
+{# ... #}
+
+{% block stylesheets %}
+&amp;lt;link href=&quot;{{ asset(&#39;css/main.css&#39;) }}&quot; rel=&quot;stylesheet&quot; /&amp;gt;
+{% endblock %}
+&amp;lt;/head&amp;gt;
+&amp;lt;body&amp;gt;
+{# ... #}
+
+{% block javascripts %}
+&amp;lt;script src=&quot;{{ asset(&#39;js/main.js&#39;) }}&quot;&amp;gt;&amp;lt;/script&amp;gt;
+{% endblock %}
+&amp;lt;/body&amp;gt;
+&amp;lt;/html&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;global-template-variables&quot;&gt;Global Template Variables&lt;/h2&gt;
+&lt;p&gt;全局的模板变量&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;* app.security - The security context.
+
+* app.user - The current user object.
+
+* app.request - The request object.
+
+* app.session - The session object.
+
+* app.environment - The current environment (dev, prod, etc).
+
+* app.debug - True if in debug mode. False otherwise.
+
+
+&amp;lt;p&amp;gt;Username: {{ app.user.username }}&amp;lt;/p&amp;gt;
+{% if app.debug %}
+    &amp;lt;p&amp;gt;Request method: {{ app.request.method }}&amp;lt;/p&amp;gt;
+    &amp;lt;p&amp;gt;Application Environment: {{ app.environment }}&amp;lt;/p&amp;gt;
+{% endif %}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;section-7&quot;&gt;配置和使用模板服务&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;return $this-&amp;gt;render(&#39;Article/index.html.twig&#39;);
+
+直接调用render()方法相当于
+
+use Symfony\Component\HttpFoundation\Response;
+
+$engine = $this-&amp;gt;container-&amp;gt;get(&#39;templating&#39;);
+$content = $engine-&amp;gt;render(&#39;Article/index.html.twig&#39;);
+
+return $response = new Response($content);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;先获取模板引擎，在加载模板，在返回一个response、&lt;/p&gt;
+
+&lt;p&gt;可以在配置文件中对模板引擎进行配置&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;app/config/config.yml
+framework:
+     ...
+        templating: { engines: [&#39;twig&#39;] }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;section-8&quot;&gt;覆盖模板文件&lt;/h2&gt;
+
+&lt;p&gt;当你下载了第三方bundle的时候，会需要覆盖它的默认的模板文件，因为symfony会去2个地方寻找模板&lt;/p&gt;
+
+&lt;p&gt;示例&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;1. app/Resources/AcmeBlogBundle/views/Blog/index.html.twig
+
+2. src/Acme/BlogBundle/Resources/views/Blog/index.html.twig
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这个时候在app的目录下的模板文件会覆盖掉src目录下的模板文件&lt;/p&gt;
+
+&lt;h2 id=&quot;section-9&quot;&gt;三个等级的继承&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;* Create a app/Resources/views/base.html.twig file that contains the main layout for your application (like in the previous example). Internally, this template is called base.html.twig;第一步创建一个基础模板
+
+* Create a template for each &quot;section&quot; of your site. For example, the blog functionality would have a template called Blog/layout.html.twig that contains only blog section-specific elements;第二步创建一个站点模板，它继承基础模板
+
+* Create individual templates for each page and make each extend the appropriate section template. For example, the &quot;index&quot; page would be called something close to Blog/index.html.twig and list the actual blog posts.创建单独的页面模板，他继承站点模板
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;output-escaping&quot;&gt;output escaping&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;格式化输出，可以通过filter实现
+
+{{ article.body|raw }}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;section-10&quot;&gt;可以对模板进行语法检查&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt; You can check by filename:
+$ php app/console twig:lint app/Resources/views/Article/recentList.html.twig
+
+ or by directory:
+$ php app/console twig:lint app/Resources/views
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;section-11&quot;&gt;模板的格式化&lt;/h2&gt;
+
+&lt;p&gt;如展示一个XML模板&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;* XML template name: Article/index.xml.twig
+
+* XML template filename: index.xml.twig
+
+public function indexAction(Request $request)
+{
+        $format = $request-&amp;gt;getRequestFormat();
+
+            return $this-&amp;gt;render(&#39;Blog/index.&#39;.$format.&#39;.twig&#39;);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;在twig中创建一个pdf的链接&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;a href=&quot;{{ path(&#39;article_show&#39;, {&#39;id&#39;: 123, &#39;_format&#39;: &#39;pdf&#39;}) }}&quot;&amp;gt;
+    PDF Version
+&amp;lt;/a&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;By anni @Global City 2014-12-12&lt;/p&gt;
+
+</description>
+                <link>http://lian3204321.github.io/symfony/2014/12/12/symfony-Template</link>
+                <guid>http://lian3204321.github.io/symfony/2014/12/12/symfony-Template</guid>
+                <pubDate>2014-12-12T00:00:00+08:00</pubDate>
+        </item>
+
+        <item>
+                <title>Symfony Controller</title>
+                <description>&lt;h1 id=&quot;controller&quot;&gt;Controller&lt;/h1&gt;
+
+&lt;p&gt;symfony中controller就和HTTP一样，有了request后，必须要有respose.&lt;/p&gt;
+
+&lt;p&gt;response可以是一个Response object, an HTML page, an XML document, a serialized JSON array, an image, a redirect, a 404 error or anything else&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;示例
+use Symfony\Component\HttpFoundation\Response;
+
+public function helloAction()
+{
+        return new Response(&#39;Hello world!&#39;);
+} ##一个请求的基本流程
+
+1. Each request is handled by a single front controller file (e.g. app.php or app_dev.php) that bootstraps the application; 每一个请求都由前台控制器进行任务分发
+2. The Router reads information from the request (e.g. the URI), finds a route that matches that information, and reads the _controller parameter from the route; 经过路由进行请求分析读取controller信息
+3. The controller from the matched route is executed and the code inside the controller creates and returns a Response object;和路由匹配的controller执行业务逻辑代码，创建并返回一个Response
+4. The HTTP headers and content of the Response object are sent back to the client.根据HTTP头信息返回到客户端
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&quot;section&quot;&gt;出现的问题&lt;/h4&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;返回一个Response对象后，访问页面进行报错，提示不是一个Response对象&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h4 id=&quot;section-1&quot;&gt;解决方法&lt;/h4&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;加载的命名空间出现问题，应该加载use Symfony\Component\HttpFoundation\Response; 而不是加载use Symfony\Component\BrowserKit\Response; &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;urlcontroller&quot;&gt;映射一个URL到Controller&lt;/h2&gt;
+&lt;p&gt;方式1:通过annotation方式在注释中规定routing
+    在config文件中指定已annotation方式进行路由发放，可以指定路由前缀,可以传入$name的变量,可以传入多个变量。在方法中定义的参数必须要有值传入，路由中定义的变量，可以不传到方法的参数中
+    _demo_secured:
+    resource: “@AcmeDemoBundle/Controller/SecuredController.php”
+    type:     annotation
+    prefix:   /demo&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;/**
+ * @Route(&quot;/hello/{name}&quot;, name=&quot;hello&quot;)
+ */
+public function indexAction($name)
+{
+    return new Response(&#39;&amp;lt;html&amp;gt;&amp;lt;body&amp;gt;Hello &#39;.$name.&#39;!&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt;&#39;);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;方式2:通过在config目录下的routing.yml文件中进行配置，直接指定到控制器下的方法&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;_anni_xman:
+path: /xman
+defaults: {_controller: AcmeDemoBundle:Anni:xman }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;requestrequestgetpage&quot;&gt;在控制器中获取request的信息，可以直接在参数中传入Request类的对象参数，获取get传入的page值&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;use Symfony\Component\HttpFoundation\Request;
+
+public function indexAction($firstName, $lastName, Request $request)
+{
+        $page = $request-&amp;gt;query-&amp;gt;get(&#39;page&#39;, 1);
+
+            // ...
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;section-2&quot;&gt;基础控制器类&lt;/h2&gt;
+
+&lt;p&gt;继承了基础控制类后，可以通过$this -&amp;gt; get()来获取symfony的container中的其他service，查看container中包含的所有的sevice可以使用命令&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ php app/console debug:container
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;继承基础控制器，获取其他的service的代码&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;namespace AppBundle\Controller;
+
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+
+class HelloController extends Controller
+{
+        // ...
+
+        $templating = $this-&amp;gt;get(&#39;templating&#39;);
+
+        $router = $this-&amp;gt;get(&#39;router&#39;);
+
+        $mailer = $this-&amp;gt;get(&#39;mailer&#39;);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;section-3&quot;&gt;跳转&lt;/h2&gt;
+
+&lt;p&gt;使用redirect()方法,通过generateUrl方法来获取URL，下例中的homepage指的是rout的name属性&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public function indexAction()
+{
+        return $this-&amp;gt;redirect($this-&amp;gt;generateUrl(&#39;homepage&#39;),200);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可以使用RedirectResponse类进行跳转&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;use Symfony\Component\HttpFoundation\RedirectResponse;
+
+return new RedirectResponse($this-&amp;gt;generateUrl(&#39;homepage&#39;));
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;section-4&quot;&gt;加载模板&lt;/h2&gt;
+
+&lt;p&gt;使用$this -&amp;gt; render()进行加载&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// renders app/Resources/views/Hello/index.html.twig
+return $this-&amp;gt;render(&#39;Hello/index.html.twig&#39;, array(&#39;name&#39; =&amp;gt; $name));
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;或者&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// renders app/Resources/views/Hello/Greetings/index.html.twig
+return $this-&amp;gt;render(&#39;Hello/Greetings/index.html.twig&#39;, array(&#39;name&#39; =&amp;gt; $name));
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;section-5&quot;&gt;管理错误页面&lt;/h2&gt;
+
+&lt;p&gt;可以通过丢出Exception的方式&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public function indexAction()
+{
+    // retrieve the object from database
+    $product = ...;
+    if (!$product) {
+          throw $this-&amp;gt;createNotFoundException(&#39;The product does not exist&#39;)
+    }
+
+    return $this-&amp;gt;render(...);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;session&quot;&gt;进行session操作&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;use Symfony\Component\HttpFoundation\Request;
+
+public function indexAction(Request $request)
+{
+    $session = $request-&amp;gt;getSession();
+
+    // store an attribute for reuse during a later user request
+    $session-&amp;gt;set(&#39;foo&#39;, &#39;bar&#39;);
+
+    // get the attribute set by another controller in another request
+     $foobar = $session-&amp;gt;get(&#39;foobar&#39;);
+
+    // use a default value if the attribute doesn&#39;t exist
+  $filters = $session-&amp;gt;get(&#39;filters&#39;, array());
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&quot;flash-message-sessionsession&quot;&gt;flash message 可以使用session保存一个存在时间只是一个请求时间的session信息&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;use Symfony\Component\HttpFoundation\Request;
+
+public function updateAction(Request $request)
+{
+    $form = $this-&amp;gt;createForm(...);
+
+    $form-&amp;gt;handleRequest($request);
+
+    if ($form-&amp;gt;isValid()) {
+        // do some sort of processing
+
+        $request-&amp;gt;getSession()-&amp;gt;getFlashBag()-&amp;gt;add(
+                &#39;notice&#39;,
+                &#39;Your changes were saved!&#39;
+                );
+
+        return $this-&amp;gt;redirect($this-&amp;gt;generateUrl(...));
+    }
+
+    return $this-&amp;gt;render(...);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这是一个获取表单进行处理后进行跳转前，保存了一个flash message信息，在跳转的模板里面可以直接使用 &lt;/p&gt;
+
+&lt;p&gt;一个请求之后flash message 就消失&lt;/p&gt;
+
+&lt;h2 id=&quot;response-object&quot;&gt;Response Object&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;use Symfony\Component\HttpFoundation\Response;
+
+// create a simple Response with a 200 status code (the default)
+$response = new Response(&#39;Hello &#39;.$name, Response::HTTP_OK);
+
+// create a JSON-response with a 200 status code
+$response = new Response(json_encode(array(&#39;name&#39; =&amp;gt; $name)));
+$response-&amp;gt;headers-&amp;gt;set(&#39;Content-Type&#39;, &#39;application/json&#39;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;有多种reponse的对象，JsonResponse，FileResponse , StreamedReponse&lt;/p&gt;
+
+&lt;h2 id=&quot;request-object&quot;&gt;Request Object&lt;/h2&gt;
+&lt;p&gt;这是个获取请求的对象包含get，post等请求信息&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;use Symfony\Component\HttpFoundation\Request;
+
+public function indexAction(Request $request)
+{
+        $request-&amp;gt;isXmlHttpRequest(); // is it an Ajax request?
+
+        $request-&amp;gt;getPreferredLanguage(array(&#39;en&#39;, &#39;fr&#39;));
+
+        $request-&amp;gt;query-&amp;gt;get(&#39;page&#39;); // get a $_GET parameter
+
+        $request-&amp;gt;request-&amp;gt;get(&#39;page&#39;); // get a $_POST parameter
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;create-static-page&quot;&gt;Create Static Page&lt;/h2&gt;
+&lt;p&gt;创建一个静态页面（只需要一个route和一个template）
+可以直接在config文件夹中的routing.yml进行配置&lt;/p&gt;
+
+&lt;p&gt;acme_privacy:
+        path: /privacy
+        defaults:
+            _controller: FrameworkBundle:Template:template
+            template:    ‘AcmeBundle:Static:privacy.html.twig’&lt;/p&gt;
+
+&lt;p&gt;在模板中展示的方式&lt;/p&gt;
+
+&lt;p&gt;可以将静态页面进行缓存&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;acme_privacy:
+    path: /privacy
+    defaults:
+            _controller:  FrameworkBundle:Template:template
+            template:     &#39;AcmeBundle:Static:privacy.html.twig&#39;
+            maxAge:       86400
+            sharedAge:    86400
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这个cache是HTTPCACHE&lt;/p&gt;
+
+&lt;h2 id=&quot;forwarding-to-another-controller&quot;&gt;跳转另一个控制器Forwarding to another Controller&lt;/h2&gt;
+
+&lt;p&gt;通过$this-&amp;gt;forward()进行跳转&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public function indexAction($name)
+{
+        $response = $this-&amp;gt;forward(&#39;AppBundle:Something:fancy&#39;, array(
+                &#39;name&#39;  =&amp;gt; $name,
+                        &#39;color&#39; =&amp;gt; &#39;green&#39;,
+                            ));
+
+            // ... further modify the response or return it directly
+
+                return $response;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;在AppBundle中的something控制器的fancy就会被调用，同时传入$name,和$color 2个参数&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public function fancyAction($name, $color)
+{
+        // ... create and return a Response object
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;by-anni-global-city-2014-12-11&quot;&gt;By anni @Global City 2014-12-11&lt;/h2&gt;
+
+</description>
+                <link>http://lian3204321.github.io/symfony/2014/12/11/symfony-controller</link>
+                <guid>http://lian3204321.github.io/symfony/2014/12/11/symfony-controller</guid>
+                <pubDate>2014-12-11T00:00:00+08:00</pubDate>
+        </item>
+
+        <item>
+                <title>Symfony Routing</title>
+                <description>&lt;h1 id=&quot;routing&quot;&gt;Routing&lt;/h1&gt;
+
+&lt;h2 id=&quot;section&quot;&gt;学习目的&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Create complex routes that map to controllers&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Generate URLs inside templates and controllers&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Load routing resources from bundles (or anywhere else)&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Debug your routes&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;annotation&quot;&gt;一个annotation的示例&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;// src/AppBundle/Controller/BlogController.php
+namespace AppBundle\Controller;
+
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+
+class BlogController extends Controller
+{
+        /**
+         * @Route(&quot;/blog/{slug}&quot;)
+         */
+        public function showAction($slug)
+        {
+                                      // ...
+        }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;该路由指向/blog  传入一个$slug的参数&lt;/p&gt;
+
+&lt;h2 id=&quot;routes&quot;&gt;创造Routes&lt;/h2&gt;
+&lt;p&gt;在config文件夹中的config.yml文件中包含入routing.yml文件&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;app/config/config.yml
+framework:
+     ...
+    router: { resource: &quot;%kernel.root_dir%/config/routing.yml&quot; }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;basic-route-configuration&quot;&gt;basic route configuration&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;class MainController extends Controller
+{
+        /**
+         * @Route(&quot;/&quot;)
+         */
+         public function homepageAction()
+         {
+                                      // ...
+         }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;一个基础的路由指向  (/)  maps it to the AppBundle:Main:homepage controller&lt;/p&gt;
+
+&lt;h3 id=&quot;section-1&quot;&gt;路由参数&lt;/h3&gt;
+
+&lt;p&gt;可以在给路由分配参数的时候指定默认值&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;/**
+ * @Route(&quot;/blog/{page}&quot;, defaults={&quot;page&quot; = 1})
+  */
+  public function indexAction($page)
+  {
+          // ...
+  }
+  
+
+/**
+ * @Route(&quot;/blog/{slug}&quot;)
+ */
+public function showAction($slug)
+{
+    // ...
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;当出现2个同样的路由请求时，但是参数类型不同例如{page} = 2,{slug} = “my-blog-post” ，可以对参数进行类型限制&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;/**
+ * @Route(&quot;/blog/{page}&quot;, defaults={&quot;page&quot;: 1}, requirements={&quot;page&quot;: &quot;\d+&quot;})
+  */
+  public function indexAction($page)
+  {
+          // ...
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;通过\d+限制了page只可以接受到为数字的值&lt;/p&gt;
+
+&lt;p&gt;也可以对参数进行选择限制，规定路由后所带的参数的值,如下例中的 限制参数的值只可以为en和fr&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;class MainController extends Controller
+{
+    /**
+     * @Route(&quot;/{_locale}&quot;, defaults={&quot;_locale&quot;: &quot;en&quot;}, requirements={&quot;_locale&quot;: &quot;en|fr&quot;})
+     */
+    public function homepageAction($_locale)
+                          {
+                                  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;该例子中$_locale的值默认为en ，限制为只可以为en和fr的值&lt;/p&gt;
+
+&lt;p&gt;同样可以限制HTTP请求的方式&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// src/AppBundle/Controller/MainController.php
+namespace AppBundle\Controller;
+
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+// ...
+
+class MainController extends Controller
+{
+/**
+ * @Route(&quot;/contact&quot;)
+ * @Method(&quot;GET&quot;)
+ */
+public function contactAction()
+{
+    // ... display contact form
+}
+
+/**
+ * @Route(&quot;/contact&quot;)
+ * @Method(&quot;POST&quot;)
+ */
+public function processContactAction()
+{
+    // ... process contact form
+}
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可以限制一个请求为get 方式 或者为 post 方式 ，可以充分利用http协议中的请求动作,get展示表单，post方式接收处理表单&lt;/p&gt;
+
+&lt;p&gt;在用@Method()进行请求动作判断时需要 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;&lt;/p&gt;
+
+&lt;h3 id=&quot;match-a-route-based-on-the-host&quot;&gt;可以Match a Route Based on the Host&lt;/h3&gt;
+
+&lt;h3 id=&quot;condition&quot;&gt;在配置文件中限定一个路由的访问条件，用condition项&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;contact:
+path:     /contact
+defaults: { _controller: AcmeDemoBundle:Main:contact }
+condition: &quot;context.getMethod() in [&#39;GET&#39;, &#39;HEAD&#39;] and request.headers.get(&#39;User-Agent&#39;) matches &#39;/firefox/i&#39;&quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这个condition在缓存中生成的php代码如下&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;if (rtrim($pathinfo, &#39;/contact&#39;) === &#39;&#39; &amp;amp;&amp;amp; (
+        in_array($context-&amp;gt;getMethod(), array(0 =&amp;gt; &quot;GET&quot;, 1 =&amp;gt; &quot;HEAD&quot;))
+        &amp;amp;&amp;amp; preg_match(&quot;/firefox/i&quot;, $request-&amp;gt;headers-&amp;gt;get(&quot;User-Agent&quot;))
+        )) {
+// ...
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;routing-1&quot;&gt;一个完整的routing例子&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;class ArticleController extends Controller
+{
+    /**
+     * @Route(
+     *     &quot;/articles/{_locale}/{year}/{title}.{_format}&quot;,
+     *     defaults= {&quot;_format&quot;: &quot;html&quot;},
+     *     requirements= {&quot;_locale&quot;: &quot;en|fr&quot;, &quot;_format&quot;: &quot;html|rss&quot;, &quot;year&quot;: &quot;\d+&quot;}
+     * )
+     */
+    public function showAction($_locale, $year, $title)
+    {
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;*注意defaults 后面跟的是= 而不是 :  ,因为官网貌似写错了&lt;/p&gt;
+
+&lt;h3 id=&quot;section-2&quot;&gt;特殊的路由参数&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;_controller:As you&#39;ve seen, this parameter is used to determine which controller is executed when the route is matched;
+
+_format:Used to set the request format;
+
+_locale:Used to set the locale on the request
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可以在config文件夹中routing.yml文件中定义_controller&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;app/config/routing.yml
+    hello:
+        path:     /hello
+        defaults: { _controller: acme.hello.controller:indexAction }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;section-3&quot;&gt;路由前缀&lt;/h3&gt;
+
+&lt;p&gt;可以在定义路由的时候加上前缀&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;app/config/routing.yml
+app:
+    resource: &quot;@AppBundle/Controller/&quot;
+    type:     annotation
+    prefix:   /site
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;section-4&quot;&gt;可以为路由指定域名&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;acme_hello:
+    resource: &quot;@AcmeHelloBundle/Resources/config/routing.yml&quot;
+    host:     &quot;hello.example.com&quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;debug&quot;&gt;对路由进行debug的测试&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;$ php app/console debug:router
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;根据路由名称，获取相关信息&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ php app/console debug:router 路由名称
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可以写一个url进行测试看匹配到什么路由&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ php app/console router:match /blog/my-latest-post
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;获取一个uri对应的路由&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$param = $this -&amp;gt; get(&#39;router&#39;) -&amp;gt;match(&#39;/demo/hello/2014&#39;);
+var_dump($param);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;结果为&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;array (size=3)
+  &#39;_controller&#39; =&amp;gt; string &#39;Acme\DemoBundle\Controller\DemoController::helloAction&#39; (length=54)
+    &#39;name&#39; =&amp;gt; string &#39;2014&#39; (length=4)
+      &#39;_route&#39; =&amp;gt; string &#39;_demo_hello&#39; (length=11)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;获取一个路由对应的uri&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$uri = $this -&amp;gt; get(&#39;router&#39;) -&amp;gt; generate(&#39;_main_anni&#39;);
+var_dump($uri);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;结果为&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;string &#39;/demo/abc&#39; (length=9)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;获取一个路由对应的url（在继承了baseController后就可以用generateURl方法）&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$url = $this  -&amp;gt;generateUrl(&#39;_demo_contact&#39;);
+ echo &quot;&amp;lt;br&amp;gt;&quot;;
+var_dump($url);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;结果为&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;string &#39;/demo/contact&#39; (length=13)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;获取一个包含域名的地址如下&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$url = $this  -&amp;gt;generateUrl(&#39;_demo_contact&#39;,array(),true);
+echo &quot;&amp;lt;br&amp;gt;&quot;;
+var_dump($url);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;结果为&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;string &#39;http://test.sy.com/demo/contact&#39; (length=31)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;如果没有继承symfony的baseController,可以获取container后进行获取url&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$url = $this-&amp;gt;container-&amp;gt;get(&#39;router&#39;)-&amp;gt;generate(
+    &#39;blog_show&#39;,
+    array(&#39;slug&#39; =&amp;gt; &#39;my-blog-post&#39;)
+    );
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;当在js中使用ajax请求的时候获取uri地址的时候可以使用FOSJsRoutingBundle&lt;/p&gt;
+
+&lt;p&gt;当加载该bundle后可以直接在js中使用router&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var url = Routing.generate(
+    &#39;blog_show&#39;,
+        {&quot;slug&quot;: &#39;my-blog-post&#39;}
+        );
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;在模板中获取一个uri&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;a href=&quot;{ { url(&#39;blog_show&#39;, {&#39;slug&#39;: &#39;my-blog-post&#39;}) } }&quot;&amp;gt;
+ 
+ Read this blog post.
+
+&amp;lt;/a&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+</description>
+                <link>http://lian3204321.github.io/symfony/2014/12/11/symfony-Routing</link>
+                <guid>http://lian3204321.github.io/symfony/2014/12/11/symfony-Routing</guid>
+                <pubDate>2014-12-11T00:00:00+08:00</pubDate>
+        </item>
+
+        <item>
+                <title>Symfony安装记录</title>
+                <description>&lt;h2 id=&quot;symfony&quot;&gt;安装symfony&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;$ curl -s https://getcomposer.org/installer | php   下载composer文件
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;执行下载的composer文件进行安装&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ php composer.phar create-project symfony/framework-standard-edition /path/to/webroot/Symfony &#39;~2.6&#39;
+通过composer.phar进行symfony的安装其中/path/to/webroot/symfony指向的是项目目录，可以在命令后加-vvv 来显示安装细节
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&quot;section&quot;&gt;出现问题:&lt;/h4&gt;
+&lt;ol&gt;
+  &lt;li&gt;安装时项目目录不是一个空目录，报错. &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h4 id=&quot;section-1&quot;&gt;解决方法：&lt;/h4&gt;
+&lt;ol&gt;
+  &lt;li&gt;重新建一个空文件夹&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;nginx&quot;&gt;配置nginx&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;server {
+    server_name domain.tld www.domain.tld;
+    root /var/www/project/web;
+
+    location / {
+     # try to serve file directly, fallback to app.php
+     try_files $uri /app.php$is_args$args;
+  }
+    # DEV
+  # This rule should only be placed on your development environment
+  # In production, don&#39;t include this and don&#39;t deploy app_dev.php or config.php
+    location ~ ^/(app_dev|config)\.php(/|$) {
+        fastcgi_pass unix:/var/run/php5-fpm.sock;
+       fastcgi_split_path_info ^(.+\.php)(/.*)$;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+       fastcgi_param HTTPS off;
+    }
+    # PROD
+location ~ ^/app\.php(/|$) {
+    fastcgi_pass unix:/var/run/php5-fpm.sock;
+    fastcgi_split_path_info ^(.+\.php)(/.*)$;
+    include fastcgi_params;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    fastcgi_param HTTPS off;
+# Prevents URIs that include the front controller. This will 404:
+# http://domain.tld/app.php/some-path
+# Remove the internal directive to allow URIs like this
+   internal;
+    }
+
+        error_log /var/log/nginx/project_error.log;
+        access_log /var/log/nginx/project_access.log;
+ }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&quot;section-2&quot;&gt;出现问题：&lt;/h4&gt;
+&lt;p&gt;1.访问网站是出现下载&lt;/p&gt;
+
+&lt;h4 id=&quot;section-3&quot;&gt;解决方法：&lt;/h4&gt;
+&lt;p&gt;1.指向出了问题配的开发环境应该指向aPP_dev.php,不应该指向app.php文件&lt;/p&gt;
+
+&lt;h2 id=&quot;bundle&quot;&gt;创建一个新的bundle&lt;/h2&gt;
+
+&lt;p&gt;输入命令：
+    $ php app/console generate:bundle –namespace=Acme/DemoBundle –format=yml   //创建在Acme/DemoBundle的目录下面，配置文件格式是yml格式&lt;/p&gt;
+
+&lt;p&gt;生成的bundle的在app/AppKernel.php文件中的registerBundles方法中返回&lt;/p&gt;
+
+&lt;h3 id=&quot;section-4&quot;&gt;创建一个路由&lt;/h3&gt;
+
+&lt;p&gt;创建路由的2种方式：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;1. anootation方式，通过注释进行路由设置
+
+_demo:
+    resource: &quot;@AcmeDemoBundle/Controller/DemoController.php&quot;
+    type:     annotation
+    prefix:   /demo
+
+/demo为前置路由
+
+2.直接在routing.yml文件中的直接写path路由,default直接指向一个方法,可以在路由中直接对方法中传入$limit变量的值
+
+_welcome:
+    path:     /random/{limit}
+    defaults: { _controller: AcmeDemoBundle:Welcome:index }
+
+path直接写入路由信息,指向控制器的一个方法action
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;section-5&quot;&gt;创建一个控制器&lt;/h3&gt;
+
+&lt;p&gt;在对应的bundle的目录中的controller目录中创建控制器,控制器中的方法必须要有一个response，如Response对象或者一个模板&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;class AnniController extends Controller{
+
+        public function indexAction($hello){
+
+            return new Response(&quot;$hello , is coming&quot;);
+        }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&quot;section-6&quot;&gt;出现问题：&lt;/h4&gt;
+
+&lt;p&gt;1.返回了一个respose对象后还是报错 提示需要一个response对象&lt;/p&gt;
+
+&lt;h4 id=&quot;section-7&quot;&gt;解决方法:&lt;/h4&gt;
+
+&lt;h3 id=&quot;section-8&quot;&gt;创建一个模板&lt;/h3&gt;
+
+&lt;p&gt;创建模板的方式：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;1.直接使用render方法引入一个模板
+    public function xmanAction(){
+        $name = &#39;wolaile&#39;;
+        return $this -&amp;gt; render(&quot;AcmeDemoBundle:Anni:xman.html.twig&quot; , array(&#39;xman&#39; =&amp;gt; $name));
+    }
+
+2.使用annotation进行引入模板，可以使用@Template()引入模板如果不填则默认引入AcmeDemoBundle:Demo:helloanni.html.twig,填了则引入对应模板
+
+/**
+ * @route(&quot;/abc&quot;, name=&quot;_main_anni&quot;)
+ * @Template(&quot;AcmeDemoBundle:Demo:abc.html.twig&quot;)
+ * */
+public function helloanniAction(){
+    $anni = &#39;dilisa&#39;;
+    return array(&#39;name&#39; =&amp;gt; $anni);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;模板的调用名称的组成为：BundleName:ControllerName:TemplateName
+对应的目录结构为/path/to/BundleName/Resources/views/ControllerName/TemplateName
+其中ControllerName如果为空则指向的目录 为/path/to/BundleName/Resources/views/TemplateName  一般用来设置父级模板
+因为使用的是twig模板，可以使用extends和block进行模板部署&lt;/p&gt;
+
+&lt;h2 id=&quot;section-9&quot;&gt;目录结构&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code&gt;* app/: This directory contains the application configuration; 包含了项目的配置文件，缓存，日志文件，appKernel核心代码，基础模板文件
+
+* src/: All the project PHP code is stored under this directory; 所有的项目代码全部在此目录中
+
+* vendor/: Any vendor libraries are placed here by convention; 存放所有的包文件
+
+* web/: This is the web root directory and contains any publicly accessible files;这个是web服务器指向的目录，存放站点文件
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;bundle-1&quot;&gt;Bundle的目录结构&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;* Controller/ contains the controllers of the bundle (e.g. RandomController.php);控制器目录
+
+* DependencyInjection/ holds certain dependency injection extension classes, which may import service configuration, register compiler passes or more (this directory is not necessary); 没用过不清楚
+
+* Resources/config/ houses configuration, including routing configuration (e.g. routing.yml);放bundle的配置文件，也可以把配置写在app/config目录中统一管理
+
+* Resources/views/ holds templates organized by controller name (e.g. Hello/index.html.twig);存放的是模板文件
+
+* Resources/public/ contains web assets (images, stylesheets, etc) and is copied or symbolically linked into the project web/ directory via the assets:install console command; 放样式文件和JS文件
+
+* Tests/ holds all tests for the bundle.bundle的一些测试 ###配置文件中的结构
+app/config/config.yml
+imports:
+- { resource: parameters.yml }
+- { resource: security.yml }
+
+framework:
+secret:          &quot;%secret%&quot;
+router:          { resource: &quot;%kernel.root_dir%/config/routing.yml&quot; }
+ ...
+
+ Twig Configuration
+twig:
+debug:            &quot;%kernel.debug%&quot;
+strict_variables: &quot;%kernel.debug%&quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;by-anni-global-city-2014-12-11&quot;&gt;By anni @Global City 2014-12-11&lt;/h2&gt;
+
+</description>
+                <link>http://lian3204321.github.io/symfony/2014/12/10/symfony%E5%AE%89%E8%A3%85%E8%AE%B0%E5%BD%95</link>
+                <guid>http://lian3204321.github.io/symfony/2014/12/10/symfony安装记录</guid>
+                <pubDate>2014-12-10T00:00:00+08:00</pubDate>
+        </item>
+
+        <item>
+                <title>C的指针</title>
+                <description>&lt;h1 id=&quot;section&quot;&gt;关于数组中指向指针的指针&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code&gt;void main()
+{
+    char * strs[] = { &quot;abc&quot;, &quot;xyz&quot;, &quot;jkl&quot; }; //每个元素都是指针（类似2维数组，因为字符串本身就是数组）
+    char * * p = strs;              //指针p指向第一个元素
+    for (int i = 0; i &amp;lt; 3; i++)
+    {
+      printf(&quot;%s , %s,%x\n&quot;, *(strs+i),*(p+i),strs+i);
+    }
+  system(&quot;pause&quot;);
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;因为char为字符,*strs[]中第一个元素 为“abc”的地址&lt;/p&gt;
+
+&lt;p&gt;一个指针的大小为4个字节&lt;/p&gt;
+
+&lt;p&gt;所以可以创建指向指针的指针 **p = strs;&lt;/p&gt;
+
+&lt;h2 id=&quot;by-anni-2014-12-09-global-city&quot;&gt;by anni 2014-12-09 Global City&lt;/h2&gt;
+</description>
+                <link>http://lian3204321.github.io/c/2014/12/08/c%E7%9A%84%E6%8C%87%E9%92%88</link>
+                <guid>http://lian3204321.github.io/c/2014/12/08/c的指针</guid>
+                <pubDate>2014-12-08T00:00:00+08:00</pubDate>
+        </item>
+
+        <item>
+                <title>关于git的命令</title>
+                <description>&lt;h1 id=&quot;git&quot;&gt;一些关于git的命令记录&lt;/h1&gt;
+
+&lt;p&gt;2014.12.07&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git clone  地址   复制代码到本地
+   
+git pull 更新本地代码
+   
+git add 文件名 添加文件到暂存区
+
+git commit  分支名 添加暂存区到本地代码库
+
+git commit -a 将跟踪的文件添加到暂存区并提交到本地代码库
+
+   
+git push 将代码同步到线上
+
+git checkout  进行切换分支
+
+git branch 查看分支
+
+
+git reset HARD 获得的commit的编号  或者 
+    
+    使用情况：先使用git log 获取commit的记录 ，再使用 git reset [commit 的编号] 
+
+git stash 进行快照 回到上一次commit 的状态
+
+git stash apply 回复stash快照
+
+git config --global credential.helper cache  在http 下push 时 存储密码
+
+git config --global credential.helper &#39;cache --timeout=3600&#39;     改变存储密码的时间默认是15分钟
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&quot;by-anni&quot;&gt;by anni&lt;/h2&gt;
+</description>
+                <link>http://lian3204321.github.io/git/2014/12/07/%E5%85%B3%E4%BA%8Egit%E7%9A%84%E5%91%BD%E4%BB%A4</link>
+                <guid>http://lian3204321.github.io/git/2014/12/07/关于git的命令</guid>
+                <pubDate>2014-12-07T00:00:00+08:00</pubDate>
+        </item>
 
         <item>
                 <title>Hello World</title>

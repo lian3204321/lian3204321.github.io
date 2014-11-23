@@ -1,0 +1,494 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Symfony Controller</title>
+    
+    <meta name="author" content="">
+
+    <!-- Enable responsive viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap styles -->
+    <link href="/assets/themes/bootstrap-3/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Optional theme -->
+    <link href="/assets/themes/bootstrap-3/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
+    <!-- Sticky Footer -->
+    <link href="/assets/themes/bootstrap-3/bootstrap/css/bs-sticky-footer.css" rel="stylesheet">
+    
+    <!-- Custom styles -->
+    <link href="/assets/themes/bootstrap-3/css/style.css?body=1" rel="stylesheet" type="text/css" media="all">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <!-- Update these with your own images
+      <link rel="shortcut icon" href="images/favicon.ico">
+      <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+      <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+      <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+    -->
+
+    <!-- atom & rss feed -->
+    <link href="" type="application/atom+xml" rel="alternate" title="Sitewide ATOM Feed">
+    <link href="" type="application/rss+xml" rel="alternate" title="Sitewide RSS Feed">
+
+  </head>
+
+  <body>
+    <div id="wrap">
+      <nav class="navbar navbar-default" role="navigation">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#jb-navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">anni baby home</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="jb-navbar-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+            
+
+
+  
+    
+      
+      	
+      	<li><a href="/archive.html">Archive</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/categories.html">Categories</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/pages.html">Pages</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/tags.html">Tags</a></li>
+      	
+      
+    
+  
+
+
+
+          </ul>
+          <form class="navbar-form navbar-right" role="search">
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="Search">
+            </div>
+            <button type="submit" class="btn btn-default">Submit</button>
+          </form>
+        </div><!-- /.navbar-collapse -->
+      </nav>
+
+      <div class="container">
+        
+<div class="page-header">
+  <h1>Symfony Controller </h1>
+</div>
+
+<div class="row post-full">
+  <div class="col-xs-12">
+    <div class="date">
+      <span>11 December 2014</span>
+    </div>
+    <div class="content">
+      <h1 id="controller">Controller</h1>
+
+<p>symfony中controller就和HTTP一样，有了request后，必须要有respose.</p>
+
+<p>response可以是一个Response object, an HTML page, an XML document, a serialized JSON array, an image, a redirect, a 404 error or anything else</p>
+
+<pre><code>示例
+use Symfony\Component\HttpFoundation\Response;
+
+public function helloAction()
+{
+        return new Response('Hello world!');
+} ##一个请求的基本流程
+
+1. Each request is handled by a single front controller file (e.g. app.php or app_dev.php) that bootstraps the application; 每一个请求都由前台控制器进行任务分发
+2. The Router reads information from the request (e.g. the URI), finds a route that matches that information, and reads the _controller parameter from the route; 经过路由进行请求分析读取controller信息
+3. The controller from the matched route is executed and the code inside the controller creates and returns a Response object;和路由匹配的controller执行业务逻辑代码，创建并返回一个Response
+4. The HTTP headers and content of the Response object are sent back to the client.根据HTTP头信息返回到客户端
+</code></pre>
+
+<h4 id="section">出现的问题</h4>
+
+<ol>
+  <li>返回一个Response对象后，访问页面进行报错，提示不是一个Response对象</li>
+</ol>
+
+<h4 id="section-1">解决方法</h4>
+
+<ol>
+  <li>加载的命名空间出现问题，应该加载use Symfony\Component\HttpFoundation\Response; 而不是加载use Symfony\Component\BrowserKit\Response; </li>
+</ol>
+
+<h2 id="urlcontroller">映射一个URL到Controller</h2>
+<p>方式1:通过annotation方式在注释中规定routing
+    在config文件中指定已annotation方式进行路由发放，可以指定路由前缀,可以传入$name的变量,可以传入多个变量。在方法中定义的参数必须要有值传入，路由中定义的变量，可以不传到方法的参数中
+    _demo_secured:
+    resource: “@AcmeDemoBundle/Controller/SecuredController.php”
+    type:     annotation
+    prefix:   /demo</p>
+
+<pre><code>/**
+ * @Route("/hello/{name}", name="hello")
+ */
+public function indexAction($name)
+{
+    return new Response('&lt;html&gt;&lt;body&gt;Hello '.$name.'!&lt;/body&gt;&lt;/html&gt;');
+}
+</code></pre>
+
+<p>方式2:通过在config目录下的routing.yml文件中进行配置，直接指定到控制器下的方法</p>
+
+<pre><code>_anni_xman:
+path: /xman
+defaults: {_controller: AcmeDemoBundle:Anni:xman }
+</code></pre>
+
+<h2 id="requestrequestgetpage">在控制器中获取request的信息，可以直接在参数中传入Request类的对象参数，获取get传入的page值</h2>
+
+<pre><code>use Symfony\Component\HttpFoundation\Request;
+
+public function indexAction($firstName, $lastName, Request $request)
+{
+        $page = $request-&gt;query-&gt;get('page', 1);
+
+            // ...
+}
+</code></pre>
+
+<h2 id="section-2">基础控制器类</h2>
+
+<p>继承了基础控制类后，可以通过$this -&gt; get()来获取symfony的container中的其他service，查看container中包含的所有的sevice可以使用命令</p>
+
+<pre><code>$ php app/console debug:container
+</code></pre>
+
+<p>继承基础控制器，获取其他的service的代码</p>
+
+<pre><code>namespace AppBundle\Controller;
+
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+
+class HelloController extends Controller
+{
+        // ...
+
+        $templating = $this-&gt;get('templating');
+
+        $router = $this-&gt;get('router');
+
+        $mailer = $this-&gt;get('mailer');
+}
+</code></pre>
+
+<h2 id="section-3">跳转</h2>
+
+<p>使用redirect()方法,通过generateUrl方法来获取URL，下例中的homepage指的是rout的name属性</p>
+
+<pre><code>public function indexAction()
+{
+        return $this-&gt;redirect($this-&gt;generateUrl('homepage'),200);
+}
+</code></pre>
+
+<p>可以使用RedirectResponse类进行跳转</p>
+
+<pre><code>use Symfony\Component\HttpFoundation\RedirectResponse;
+
+return new RedirectResponse($this-&gt;generateUrl('homepage'));
+</code></pre>
+
+<h2 id="section-4">加载模板</h2>
+
+<p>使用$this -&gt; render()进行加载</p>
+
+<pre><code>// renders app/Resources/views/Hello/index.html.twig
+return $this-&gt;render('Hello/index.html.twig', array('name' =&gt; $name));
+</code></pre>
+
+<p>或者</p>
+
+<pre><code>// renders app/Resources/views/Hello/Greetings/index.html.twig
+return $this-&gt;render('Hello/Greetings/index.html.twig', array('name' =&gt; $name));
+</code></pre>
+
+<h2 id="section-5">管理错误页面</h2>
+
+<p>可以通过丢出Exception的方式</p>
+
+<pre><code>public function indexAction()
+{
+    // retrieve the object from database
+    $product = ...;
+    if (!$product) {
+          throw $this-&gt;createNotFoundException('The product does not exist')
+    }
+
+    return $this-&gt;render(...);
+}
+</code></pre>
+
+<h2 id="session">进行session操作</h2>
+
+<pre><code>use Symfony\Component\HttpFoundation\Request;
+
+public function indexAction(Request $request)
+{
+    $session = $request-&gt;getSession();
+
+    // store an attribute for reuse during a later user request
+    $session-&gt;set('foo', 'bar');
+
+    // get the attribute set by another controller in another request
+     $foobar = $session-&gt;get('foobar');
+
+    // use a default value if the attribute doesn't exist
+  $filters = $session-&gt;get('filters', array());
+}
+</code></pre>
+
+<h4 id="flash-message-sessionsession">flash message 可以使用session保存一个存在时间只是一个请求时间的session信息</h4>
+
+<pre><code>use Symfony\Component\HttpFoundation\Request;
+
+public function updateAction(Request $request)
+{
+    $form = $this-&gt;createForm(...);
+
+    $form-&gt;handleRequest($request);
+
+    if ($form-&gt;isValid()) {
+        // do some sort of processing
+
+        $request-&gt;getSession()-&gt;getFlashBag()-&gt;add(
+                'notice',
+                'Your changes were saved!'
+                );
+
+        return $this-&gt;redirect($this-&gt;generateUrl(...));
+    }
+
+    return $this-&gt;render(...);
+}
+</code></pre>
+
+<p>这是一个获取表单进行处理后进行跳转前，保存了一个flash message信息，在跳转的模板里面可以直接使用 </p>
+
+<p>一个请求之后flash message 就消失</p>
+
+<h2 id="response-object">Response Object</h2>
+<pre><code>use Symfony\Component\HttpFoundation\Response;
+
+// create a simple Response with a 200 status code (the default)
+$response = new Response('Hello '.$name, Response::HTTP_OK);
+
+// create a JSON-response with a 200 status code
+$response = new Response(json_encode(array('name' =&gt; $name)));
+$response-&gt;headers-&gt;set('Content-Type', 'application/json');
+</code></pre>
+
+<p>有多种reponse的对象，JsonResponse，FileResponse , StreamedReponse</p>
+
+<h2 id="request-object">Request Object</h2>
+<p>这是个获取请求的对象包含get，post等请求信息</p>
+
+<pre><code>use Symfony\Component\HttpFoundation\Request;
+
+public function indexAction(Request $request)
+{
+        $request-&gt;isXmlHttpRequest(); // is it an Ajax request?
+
+        $request-&gt;getPreferredLanguage(array('en', 'fr'));
+
+        $request-&gt;query-&gt;get('page'); // get a $_GET parameter
+
+        $request-&gt;request-&gt;get('page'); // get a $_POST parameter
+}
+</code></pre>
+
+<h2 id="create-static-page">Create Static Page</h2>
+<p>创建一个静态页面（只需要一个route和一个template）
+可以直接在config文件夹中的routing.yml进行配置</p>
+
+<p>acme_privacy:
+        path: /privacy
+        defaults:
+            _controller: FrameworkBundle:Template:template
+            template:    ‘AcmeBundle:Static:privacy.html.twig’</p>
+
+<p>在模板中展示的方式</p>
+
+<p>可以将静态页面进行缓存</p>
+
+<pre><code>acme_privacy:
+    path: /privacy
+    defaults:
+            _controller:  FrameworkBundle:Template:template
+            template:     'AcmeBundle:Static:privacy.html.twig'
+            maxAge:       86400
+            sharedAge:    86400
+</code></pre>
+
+<p>这个cache是HTTPCACHE</p>
+
+<h2 id="forwarding-to-another-controller">跳转另一个控制器Forwarding to another Controller</h2>
+
+<p>通过$this-&gt;forward()进行跳转</p>
+
+<pre><code>public function indexAction($name)
+{
+        $response = $this-&gt;forward('AppBundle:Something:fancy', array(
+                'name'  =&gt; $name,
+                        'color' =&gt; 'green',
+                            ));
+
+            // ... further modify the response or return it directly
+
+                return $response;
+}
+</code></pre>
+
+<p>在AppBundle中的something控制器的fancy就会被调用，同时传入$name,和$color 2个参数</p>
+
+<pre><code>public function fancyAction($name, $color)
+{
+        // ... create and return a Response object
+}
+</code></pre>
+
+<h2 id="by-anni-global-city-2014-12-11">By anni @Global City 2014-12-11</h2>
+
+
+    </div>
+
+  
+    <ul class="tag_box inline">
+      <li><i class="glyphicon glyphicon-open"></i></li>
+      
+      
+
+
+  
+     
+    	<li><a href="#symfony-ref">
+    		symfony <span>4</span>
+    	</a></li>
+    
+  
+
+
+    </ul>
+    
+
+  
+    <ul class="tag_box inline">
+      <li><i class="glyphicon glyphicon-tags"></i></li>
+      
+      
+
+
+  
+     
+    	<li><a href="#php-ref">php <span>4</span></a></li>
+     
+    	<li><a href="#symfony-ref">symfony <span>4</span></a></li>
+     
+    	<li><a href="#controller-ref">controller <span>1</span></a></li>
+    
+  
+
+
+
+    </ul>
+    
+  
+    <hr>
+    <ul class="pagination">
+    
+      <li class="prev"><a href="/symfony/2014/12/11/symfony-Routing" title="Symfony Routing">&laquo; Previous</a></li>
+    
+      <li><a href="">Archive</a></li>
+    
+      <li class="next"><a href="/symfony/2014/12/12/symfony-Template" title="Symfony Template">Next &raquo;</a></li>
+    
+    </ul>
+    <hr>
+    
+  </div>
+</div>
+
+
+      </div>
+
+    </div>
+
+    <div id="footer">
+      <div class="container">
+        <p>&copy; 2014 
+          with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
+          and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
+        </p>
+      </div>
+    </div>
+
+    
+
+
+    <!-- Latest compiled and minified JavaScript, requires jQuery 1.x (2.x not supported in IE8) -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="/assets/themes/bootstrap-3/bootstrap/js/bootstrap.min.js"></script>
+  </body>
+</html>
+
