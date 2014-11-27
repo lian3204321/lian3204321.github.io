@@ -1,7 +1,7 @@
 ---
 layout: post
 category: symfony
-tags:[php,symfony,database,doctrine]
+tags: [php,symfony,database,doctrine]
 ---
 
 #Doctrine
@@ -310,6 +310,119 @@ getResult()会返回一个包含对象的数组
     $ php app/console doctrine:generate:entity --entity="AppBundle:Category" --fields="name:string(255)"
 
 ##Relationship Mapping Metadata 属性与属性间的关系映射
+
+创建2个entity之间的联系（如创建一个关于category实体和product实体的联系）
+
+在一个category的Entity中创建一个products属性
+
+    // src/AppBundle/Entity/Category.php
+
+    // ...
+    use Doctrine\Common\Collections\ArrayCollection;
+
+    class Category
+    {
+        // ...
+
+        /**
+         * @ORM\OneToMany(targetEntity="Product", mappedBy="category")
+         */
+        protected $products;
+
+        public function __construct()
+        {
+            $this->products = new ArrayCollection();
+        }
+    }
+
+注明是一个category对应多个product的关系
+
+每一个product对象都对应一个category对象，在product中加入$category
+
+    // src/AppBundle/Entity/Product.php
+
+    // ...
+    class Product
+    {
+        // ...
+
+        /**
+         * @ORM\ManyToOne(targetEntity="Category", inversedBy="products")
+         * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
+         */
+        protected $category;
+    }
+
+设置完成后在通过以下命令直接生成get和set命令
+
+    php app/console doctrine:generate:entities Acme
+
+生成get和set命令
+
+在通过命令更新数据表生成外键
+
+###Saving Related Entities
+
+有联系的Entity的插入和保存
+
+    use AppBundle\Entity\Category;
+    use AppBundle\Entity\Product;
+    use Symfony\Component\HttpFoundation\Response;
+
+    class DefaultController extends Controller
+    {
+        public function createProductAction()
+        {
+            $category = new Category();
+            $category->setName('Main Products');
+
+            $product = new Product();
+            $product->setName('Foo');
+            $product->setPrice(19.99);
+            $product->setDescription('Lorem ipsum dolor');
+            // relate this product to the category
+            $product->setCategory($category);
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($category);
+            $em->persist($product);
+            $em->flush();
+
+            return new Response(
+                    'Created product id: '.$product->getId()
+                    .' and category id: '.$category->getId()
+                    );
+        }
+    }
+
+上例中增加product时，需要将category的对象作为参数传入
+
+###Fetching Related Objects
+
+查询关联的entity
+
+    public function showAction($id)
+    {
+        $product = $this->getDoctrine()
+            ->getRepository('AppBundle:Product')
+            ->find($id);
+
+        $categoryName = $product->getCategory()->getName();
+
+        // ...
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
