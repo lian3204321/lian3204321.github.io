@@ -412,19 +412,99 @@ getResult()会返回一个包含对象的数组
         // ...
     }
 
+当做了关联之后，查询了一个product后就可以获取一个category
+
+    $product = $this->getDoctrine()
+    ->getRepository('AppBundle:Product')
+    ->find($id);
+
+    $category = $product->getCategory();
+
+    // prints "Proxies\AppBundleEntityCategoryProxy"
+    echo get_class($category);
+
+查询一个category 后就可以获取一组product的对象
+
+    public function showProductAction($id)
+    {
+        $category = $this->getDoctrine()
+            ->getRepository('AppBundle:Category')
+            ->find($id);
+
+        $products = $category->getProducts();
+
+        // ...
+    }
+
+以上获取的对象都是惰性加载的，也就是说当你不调用的时候就不会加载
+
+如果需要在一条记录里面获取一个product和其对应的category，可以选择重写repository方法
+
+    // src/AppBundle/Entity/ProductRepository.php
+    public function findOneByIdJoinedToCategory($id)
+    {
+        $query = $this->getEntityManager()
+            ->createQuery(
+                    'SELECT p, c FROM AppBundle:Product p
+                    JOIN p.category c
+                    WHERE p.id = :id'
+                    )->setParameter('id', $id);
+
+        try {
+            return $query->getSingleResult();
+        } catch (\Doctrine\ORM\NoResultException $e) {
+            return null;
+        }
+    }
+
+现在通过getRepository获取一个product的object并连接上其对应的catrgory
+
+    public function showAction($id)
+    {
+        $product = $this->getDoctrine()
+            ->getRepository('AppBundle:Product')
+            ->findOneByIdJoinedToCategory($id);
+
+        $category = $product->getCategory();
+
+        // ...
+    }
+
+
+##More Information on Associations
+
+##Configuration
+
+##Lifecycle Callbacks
+
+可以在一个entity的不同的生命周期中选择调用方法
+
+如下在这个entity第一次被persist时记录下时间
+
+    /**
+     * @ORM\Entity()
+      * @ORM\HasLifecycleCallbacks()
+       */
+       class Product
+       {
+               // ...
+       }
+
+    // src/AppBundle/Entity/Product.php
+
+    /**
+     * @ORM\PrePersist
+      */
+      public function setCreatedAtValue()
+      {
+              $this->createdAt = new \DateTime();
+      }
+
+##Doctrine Field Types Reference
 
 
 
-
-
-
-
-
-
-
-
-
-
+By anni @Global City
 
 
 
