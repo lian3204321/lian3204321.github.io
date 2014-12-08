@@ -353,3 +353,5 @@ Email : 验证一个值是不是email地址
 [Uuid](http://symfony.com/doc/current/reference/constraints/Uuid.html):唯一ID验证
 
 [Range](http://symfony.com/doc/current/reference/constraints/Range.html):在2个值间做随机值判断
+
+###By anni @Global city
