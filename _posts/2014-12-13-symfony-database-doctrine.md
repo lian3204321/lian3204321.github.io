@@ -502,6 +502,17 @@ getResult()会返回一个包含对象的数组
 
 ##Doctrine Field Types Reference
 
+##使用doctrine直接Sql查询
+
+在使用doctrine时有时需要使用sql查询，同样可以通过$em进行操作
+
+    $sql = "INSERT INTO pre_forum_ratelog (pid , uid ,username , extcredits , score , dateline ,reason) VALUES ".$sql_value;
+    
+    $em->getConnection()->query(trim($sql,','));
+    
+    $em -> flush();
+
+当flush()调用后就执行该语句
 
 
 By anni @Global City
